@@ -1,3 +1,5 @@
+'strict mode';
+
 const l = (function () {
     // keys in the configuration object that are reserved (won't work as
     // a shortcut to add a prop or attr)
@@ -17,14 +19,20 @@ const l = (function () {
     
     class L {
         constructor(name, init1={}, init2, ...children) {
+            if (l.isTagGenerator(init1)) {
+                init1 = init1();
+            } else if (l.isTag(init1)) {
+                init1 = init1.render();
+            }
+            
             const init2IsNode = l.isNode(init2),
                   init1IsNode = l.isNode(init1),
                   init2Type = typeof init2,
                   init1Type = typeof init1;
-            
+
             let init = {};
             if (!init1IsNode) {
-                if (init2IsNode || typeof init2 !== 'object') {
+                if (init2IsNode || typeof init2 !== 'object' && init2 !== undefined) {
                     init = typeof init1 === 'object' ? init1 : {};
                 } else {
                     init = init2 || init1;
@@ -60,7 +68,8 @@ const l = (function () {
                 }
             }
 
-            const init2IsChild = init2IsNode || typeof init2 !== 'object';
+
+            const init2IsChild = init2IsNode || typeof init2 !== 'object' && init2 !== undefined;
             if (init2IsChild || children.length > 0) {
                 if (init2IsChild) {
                     children = [init2].concat(children);
@@ -78,9 +87,24 @@ const l = (function () {
             this.props = init.props || {};
             this.attrs = init.attrs || {};
 
+            this._is_l_tag = true;
+
             this.liftInit(init);
         }
 
+        add(...others) {
+            for (const other of others.flat()) {
+                this.children.push(other);
+            }
+            return this;
+        }
+
+        l(...args) {
+            const tag = l(...args);
+            this.children.push(tag);
+            return this;
+        }
+        
         liftInit(init) {
             for (let name in init) {
                 let val = init[name];
@@ -128,8 +152,32 @@ const l = (function () {
               'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th',
               'thead', 'time', 'title', 'tr', 'track', 'u', 'var', 'video', 'wbr',
           ];
+
+    // TODO: should use proxy if we have it otherwise use old tag way
+    
+    let tagDefs = 'var ';
+    const tagDefAliases = {
+        var: '_var',
+            };
+    for (let i=0; i<tags.length; ++i) {
+        let key = tags[i],
+            val = '_nr' + tags[i];
+        if (key in tagDefAliases) {
+            key = tagDefAliases[key];
+        }
+        tagDefs += key + '=' + 'l.' + val + (i === tags.length - 1 ? ';' : ',');
+
+    }
+
+    const tagNoRenderFunc = tag => (...args) => new L(tag, ...args),    
+          tagFunc = tag => (...args) => new L(tag, ...args).render(),
+          tagOnTagFunc = tag => function (...args) { this.children.push(new L(tag, ...args)); return this; };
+
     for (const tag of tags) {
-        lib[tag] = (...args) => new L(tag, ...args).render();
+        lib[tag] = tagFunc(tag);
+        lib['_nr'+tag] = tagNoRenderFunc(tag);
+        lib[tag]._is_l_tag_generator = true;
+        L.prototype[tag] = tagOnTagFunc(tag);
     }
 
     const valOf = val => {
@@ -139,11 +187,18 @@ const l = (function () {
         return val;
     };
 
+    lib.isTagGenerator = o => typeof o === 'function' && o._is_l_tag_generator;
+    lib.isTag = o => typeof o === 'object' && o._is_l_tag;
+
     lib.nodify = (...vals) => {
         vals = vals.flat();
         for (let i=0; i<vals.length; ++i) {
             const val = vals[i];
-            if (!l.isNode(val)) {
+            if (l.isTag(val)) {
+                vals[i] = val.render();
+            } else if (l.isTagGenerator(val)) {
+                vals[i] = val();
+            } else if (!l.isNode(val)) {
                 vals[i] = document.createTextNode(val);
             }
         }
@@ -309,6 +364,16 @@ const l = (function () {
         }
 
         return o;
+    };
+
+    // current issue: l.div('oij', 3) 
+
+    // black magic function that lets you use html tags as function names
+    // without tainting global namespace
+    // anything that would not work as an identifier has been prefixed with an underscore
+    lib.eval = func => {
+        const f = tagDefs + 'var ret = (' + func + ')(); return l.isTag(ret) ? ret.render() : ret;';
+        return new Function('', f)();
     };
 
     return lib;
