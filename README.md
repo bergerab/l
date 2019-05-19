@@ -1,108 +1,251 @@
 <img src="logo.png" width="100px"></img>
 # _l_: An HTML Generation Library for Javascript
 
-_l_ is a 100 line Javascript file that makes generating HTML easier.
+_l_ is a Javascript library that makes generating HTML easier.
 
-When you want to create HTML dynamically you have to use the DOM API. The DOM API is verbose, and can require multiple statements to generate a single node to your liking. This library gives a functional style to DOM creation and allows for describing HTML structures in a single statement.
+When you want to create HTML dynamically you have to use the DOM API. 
+The DOM API is verbose, and can require multiple statements to generate a single node to your liking. 
+_l_ gives a declarative style to DOM creation and allows for describing HTML structures in a single statement.
 
 Try it out online [here](http://idiocode.com/projects/l/index.html#try)!
 
-## Motivation
-You can use _l_ to make DOM nodes for you, so you don't have to use the DOM API directly. This saves the programmer's time sheerly because you don't have to use the DOM's verbose wording and imperative style.
-
-The DOM API's imperative style requires you to create more lines to make nodes. Because one statement usually appears per line, it forces the programmer to write more lines of code.
-
-_l_ allows you to create a node and assign attributes to it in one line. You can also assign child nodes without assigning any additional temporary variables (unlike the document.createElement(...) API).
-
-### Bad:
-```
-const node = document.createElement('span');
-node.innerHTML = 'Meatball';
-const container = document.createElement('div');
-container.appendChild(node);
+_l_:
+```javascript
+l(() => div(
+    h1('Example'),
+    div(p('Important'), hr, p('content'), span(span(span('Nesting is easy.')))),
+    section(header(h1('HTML 5 is supported too!'))),
+    div('Properties can be set', { style: { color: 'red'}, onchange: () => alert('clicked') }),
+    div('Attributes can be set too!', { class: 'wow' }))
+);
 ```
 
-### Good:
-```
-const container = l.div([l.span('Meatball')]);
-```
-
-## Interface
-The library is meant to mimic the way DOM nodes are designed by use of attributes, properties, and children. _l_ function calls take a "configuration object" which is an object that contains either (you guessed it) attributes, properties, or children. If you specify "attrs" or "attributes" each field in that object will be added as an attribute to the HTML element.
-
-```
-l.div({ attrs: { id: 'my-id', class: 'cool' } });
-```
-
-You can also specify a "props" or "properties" key. Each field in that object will be assigned to the DOM node after creation. You can use this to attach event handlers to DOM nodes. You could also attach event handlers via an attribute, but those have different meanings. Additionally, you could use this to apply styles to the DOM node. Supplying the properties object with a style could achieve the same as this imperative code: `node.style.backgroundColor = 'red'`;.
-
-```
-l.div({ props: { style: { backgroundColor: 'red' }}});
-```
-
-There is one more special value that can be placed in the configuration object: children. In the DOM API you can only add children through function calls. There is no way to create an element that already has children on it. _l_ solves that problem:
-
-```
-l.div({ children: [ l.b('1'), l.b('2'), l.b('3') ]});
+HTML:
+```html
+<div>
+    <h1>Example</h1>
+    <div>
+        <p>Important</p>
+        <hr>
+        <p>content</p>
+        <span><span><span>Nesting is easy.</span></span></span>
+    </div>
+    <section>
+        <header><h1>HTML 5 is supported too!</h1></header>
+    </section>
+    <div style="color: red;">Properties can be set</div>
+    <div class="wow">Attributes can be set too!</div>
+</div>
 ```
 
-## Syntax
-Nodes are created by writing `l.tagname(...)` where "tagname" is a valid name of an HTML element like "div" or "b". HTML5 elements are supported as well. For example: `l.section(l.h1('Title'));`.
+## Installation
+blahbl ablhb lahblabh albhalbh albhalba
+b ahblahbhalb halb halb halbh abl hablhab
+a bhl ablhablahblahblahb lahbalbhalbha
+balhblabh
 
-You can call _l_ as a function too (`l('myweirdtagname', ...)`) to create non-standard HTML elements.
+## Tutorial
+The interface to _l_ is the `l` object that is defined when you import _l_.
 
-There are a few shortcuts which create a shorthand for the configuration object. You can pass in a string instead of a configuration object, and that string will be used as the `innerHTML` of the node.
+## Generating Elements
+There are multiple ways to generate HTML through the `l` object. 
+The most straightforward way is to create a tag by calling the tag name by using the dot operator on the `l` object.
 
+```javascript
+l.div()
+// <div></div>
+
+l.section()
+// <section></section>
 ```
-l.div('This is in the innerHTML');
+
+Most HTML tags are supported this way. If you have an HTML tag that doesn't have a function in the `l` object, you can make your
+own by calling `l` as a function:
+
+```javascript
+l('customtag')
+// <customtag></customtag>
+
+l('burrito')
+// <burrito></burrito>
 ```
 
-You can give it an array instead too which will interpret each item in the array as a child of this node. Giving a single node to _l_ will treat that node as its only child.
+Later on, when we learn about adding children, you'll see examples where we can omit calling one of the tag functions:
 
-```
-l.div([ l.div(l.div('Only child')), l.div('Child 2') ]);
+```javascript
+l.div(l.br, l.hr)
 ```
 
-Each of these examples allows for passing of a configuration object as well. You just pass it in as the last argument:
+See how we used `l.br` and `l.hr` without calling them like `l.br()` and `l.hr`? This works for all nodes when they are children.
 
+## Adding Content
+Now we can make tags, but how can we add content to them? From both of the techniques above, we can
+add one more argument to the function calls. You can pass it a string to set the innerHTML:
+
+```javascript
+l.div('This is the innerHTML')
+// <div>This is the innerHTML</div>
+
+l('burrito', "I'm in a burrito")
+// <burrito>I'm in a burrito</burrito>
 ```
-l.div('Red text', { props: style: { color: 'red' }});
+
+## Attributes and Properties
+You can pass an object to configure attributes and properties:
+
+```javascript
+l.div({ style: { color: 'pink'}})
+// <div style="color: pink;"></div>
+
+l('burrito', { id: 'special' })
+// <burrito id="special"></burrito>
+
+l.span({ innerHTML: 'You can set the html like this too' })
+l.span({ html: 'You can set the html like this too' })
+// <span>You can set the html like this too</span>
 ```
+
+In the object that we passed, _l_ will try to guess if the value should be set as an attribute, or a property on the node.
+If you want to force a value to be a property or attribute explicitly you can use the reserved key `attrs` for attributes
+and `props` for properties:
+
+```javascript
+l.textarea({ value: 'My value' })
+// <textarea value="My value"></textarea>
+
+l.textarea({ props: { value: My value' }})
+// <textarea></textarea>
+```
+
+Notice how _l_ inferred that `value` was an attribute, but when told to use it as a property it will be assigned to the node 
+as a property. This results in the HTML not containing the potentially long `value` attribute, but it is still shown in the HTML. 
+
+
+You can mix these two arguments (the string and object) to make the syntax more compact:
+```javascript
+l.div('This is the text', { style: { color: 'red' }});
+// <div style="color: red;">This is the text</div>
+```
+
+## Children
+There are two ways of adding children to a node. You can pass a list as one of the arguments:
+
+```javascript
+l.div([l.span, l.span])
+// <div><span></span><span></span></div>
+```
+
+Or you can add any number of additional arguments as nodes:
+
+```javascript
+l.div(l.span)
+// <div><span></span></div>
+
+l.div(l.span, l.span)
+// <div><span></span><span></span></div>
+```
+
+Children don't have to be nodes either. You can pass strings, or numbers and they will be converted to
+text nodes:
+
+```javascript
+l.div(l.span('a', 'b', 'c'), 'd')
+// <div><span>abc</span>d</div>
+
+l.span(1, 2, 3, l.div(4, 'five', l.div(l.div('six'))))
+// <span>123<div>4five<div><div>six</div></div></div></span>
+```
+
+### _l_ Function
+You know how we have been saying `l.div` and `l.span`? That isn't what the example code looks like is it? To get the pretty
+code you see in the examples, you have to use _l_ functions. An _l_ function is a shortcut so that you 
+can skip typing `l.` all the time. Everything works the same as before. All the arguments are the same, its just easier to type.
+The main advantage is that you can feel like you're typing actual HTML instead of using a library.
+
+```javascript
+// without l function
+l.div(l.span('A little more typing'), l.br, l.span('But still good'))
+
+// with l function
+l(() => div(span('Feels more like writing HTML), br, span('Pretty cool')))
+
+// with l function
+l.div(() => span('You use it anywhere'), () => l.br, () => l.span('Yeah'))
+```
+
+There is a small performance overhead that comes with using _l_ functions. If you are using this to create a Javascript interface
+for a rocketship that would benefit from being 0.001 milliseconds faster, look elsewhere. But, everyone else in the world can enjoy the
+cleaner interface.
+
+A good trait of _l_ functions is that they allow for omitting the `l.`, without tainting the outer or global scope:
+
+```javascript
+var a = "Can't touch this";
+l(() => a('What are you talking about', { href: '#' }));
+// <a href="#">What are you talking about</a>
+console.log(a === "Can't touch this");
+```
+
+See how inside of the _l_ function, `a` changed its value from being `"Can't touch this"` to being a function that creates an anchor tag? Even better,
+the `a` defined in the outer scope is untouched. You can think of any tag name as a reserved keyword inside of an _l_ function.
+If you need to close a variable over an _l_ function, you should make sure it isn't the name of an HTML tag, as it will not
+be visible inside of the _l_ function.
+
+## Appending to Existing Nodes
+_l_ supports a way of appending children to existing DOM nodes. When you use `l` as a function, as we have done "Generating Elements",
+you can pass `l` an existing DOM node, and it will append any nodes that are given after it to that node.
+
+```javascript
+l(document.body, () => div("I've been appended!"))
+// <body> ... <div>I've been appended!</div></body>
+```
+
+This works as you are building elements too:
+
+```javascript
+l(l.article, () => section(h1('First Part'), p), () => section(h1('Second Part'), p))
+```
+
+## Put Them All Together
+Try mixing-and-matching adding content, with attributes and properties along with adding children and see what happens.
+Put things where you think they ought to be, and see if it works. Its easy to check the output by looking at `outerHTML`.
+
+```javascript
+l.div(1, () => div(span, br, () => div, article, 'oiwjef'), 'three', l.hr, l.br, 'four')
+// <div>1<div><span></span><br><div></div><article></article>oiwjef</div>three<hr><br>four</div>
+```
+
+That's a complicated example, but it shows how all the arguments we learned about can be nested together
+and used interchangably. _l_ makes sense of whatever mess you give it. So try to give it your own mess
+and see what it gives you back :)
 
 ## Related Libraries
 The idea of generating HTML in programming languages is old. It has been (almost famously) re-invented in lisps many times. [spinneret](https://github.com/ruricolist/spinneret), for example, is a library for generating HTML5. Programming languages like prolog, python, and c have done it too. However, these programming languages don't run directly in the browser like Javascript does. Those libraries are created for web servers or static page generation. Having access to the DOM allows nodes to be created dynamically and for creating interactive HTML. This makes Javascript a good use case for such a library.
 
-The browser already has the capability of generating HTML through a builtin interface: the DOM. I've used the DOM enough to know how time consuming it is to use, and others have noticed too and have created libraries to make using it faster for the programmer. This is exactly what _l_ is for, and exactly what the libraries seen below (which came before this) are for:
+The browser already has the capability of generating HTML through a builtin interface: the DOM. 
+I've used the DOM enough to know how time consuming it is to use. Take a look at how hard it is to generate `<div><span>This is tedious!</span></div>` and append it to `document.body`:
+
+```javascript
+const node = document.createElement('span');
+node.innerHTML = 'This is tedious!';
+const container = document.createElement('div');
+container.appendChild(node);
+document.body.appendChild(container);
+```
+
+Others have noticed how inefficient this is too and have created libraries to make using it faster for the programmer. Here are some of the libraries that came before _l_ and inspired my work:
 - [crel](https://github.com/KoryNunn/crel) - Similar in function to _l_ with interface differences.
 - [laconic](https://github.com/joestelmach/laconic) - Similar to crel (crel says this was its inspiration).
 - [RE:DOM](https://redom.js.org/) - Influenced by web components.
 
-## Unlicense
+## License
 
 ```
-Unlicense
-This is free and unencumbered software released into the public domain.
+Copyright 2019 Adam Bertrand Berger
 
-Anyone is free to copy, modify, publish, use, compile, sell, or
-distribute this software, either in source code form or as a compiled
-binary, for any purpose, commercial or non-commercial, and by any
-means.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-In jurisdictions that recognize copyright laws, the author or authors
-of this software dedicate any and all copyright interest in the
-software to the public domain. We make this dedication for the benefit
-of the public at large and to the detriment of our heirs and
-successors. We intend this dedication to be an overt act of
-relinquishment in perpetuity of all present and future rights to this
-software under copyright law.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
-
-For more information, please refer to http://unlicense.org
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
