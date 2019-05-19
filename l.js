@@ -19,11 +19,8 @@ const l = (function () {
     
     class L {
         constructor(name, init1={}, init2, ...children) {
-            if (l.isTagGenerator(init1)) {
-                init1 = init1();
-            } else if (l.isTag(init1)) {
-                init1 = init1.render();
-            }
+            init1 = this.normalize(init1);
+            init2 = this.normalize(init2);
             
             const init2IsNode = l.isNode(init2),
                   init1IsNode = l.isNode(init1),
@@ -68,7 +65,6 @@ const l = (function () {
                 }
             }
 
-
             const init2IsChild = init2IsNode || typeof init2 !== 'object' && init2 !== undefined;
             if (init2IsChild || children.length > 0) {
                 if (init2IsChild) {
@@ -87,9 +83,20 @@ const l = (function () {
             this.props = init.props || {};
             this.attrs = init.attrs || {};
 
-            this._is_l_tag = true;
+            this._is_l_L = true;
 
             this.liftInit(init);
+        }
+
+        normalize(init) {
+            if (l.isLGenerator(init)) {
+                init = init().render();
+            } else if (l.isNodeGenerator(init)) {
+                init = init();
+            } else if (l.isL(init)) {
+                init = init.render();
+            }
+            return init;
         }
 
         add(...others) {
@@ -99,12 +106,6 @@ const l = (function () {
             return this;
         }
 
-        l(...args) {
-            const tag = l(...args);
-            this.children.push(tag);
-            return this;
-        }
-        
         liftInit(init) {
             for (let name in init) {
                 let val = init[name];
@@ -166,18 +167,18 @@ const l = (function () {
             key = tagDefAliases[key];
         }
         tagDefs += key + '=' + 'l.' + val + (i === tags.length - 1 ? ';' : ',');
-
     }
 
     const tagNoRenderFunc = tag => (...args) => new L(tag, ...args),    
-          tagFunc = tag => (...args) => new L(tag, ...args).render(),
-          tagOnTagFunc = tag => function (...args) { this.children.push(new L(tag, ...args)); return this; };
+          tagFunc = tag => (...args) => new L(tag, ...args).render();
 
     for (const tag of tags) {
         lib[tag] = tagFunc(tag);
-        lib['_nr'+tag] = tagNoRenderFunc(tag);
-        lib[tag]._is_l_tag_generator = true;
-        L.prototype[tag] = tagOnTagFunc(tag);
+
+        const nrt = '_nr'+tag;
+        lib[nrt] = tagNoRenderFunc(tag);
+        lib[nrt]._is_l_L_generator = true;
+        lib[tag]._is_l_node_generator = true;
     }
 
     const valOf = val => {
@@ -187,16 +188,19 @@ const l = (function () {
         return val;
     };
 
-    lib.isTagGenerator = o => typeof o === 'function' && o._is_l_tag_generator;
-    lib.isTag = o => typeof o === 'object' && o._is_l_tag;
+    lib.isNodeGenerator = o => typeof o === 'function' && o._is_l_node_generator;
+    lib.isLGenerator = o => typeof o === 'function' && o._is_l_L_generator;    
+    lib.isL = o => typeof o === 'object' && o._is_l_L;
 
     lib.nodify = (...vals) => {
         vals = vals.flat();
         for (let i=0; i<vals.length; ++i) {
             const val = vals[i];
-            if (l.isTag(val)) {
+            if (l.isLGenerator(val)) {
+                vals[i] = val().render();                
+            } else if (l.isL(val)) {
                 vals[i] = val.render();
-            } else if (l.isTagGenerator(val)) {
+            } else if (l.isNodeGenerator(val)) {
                 vals[i] = val();
             } else if (!l.isNode(val)) {
                 vals[i] = document.createTextNode(val);
@@ -372,8 +376,8 @@ const l = (function () {
     // without tainting global namespace
     // anything that would not work as an identifier has been prefixed with an underscore
     lib.eval = func => {
-        const f = tagDefs + 'var ret = (' + func + ')(); return l.isTag(ret) ? ret.render() : ret;';
-        return new Function('', f)();
+        const f = tagDefs + 'var ret = (' + func + ')(); return l.isL(ret) ? ret.render() : ret;';
+        return new Function(f)();
     };
 
     return lib;
