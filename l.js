@@ -13,15 +13,29 @@ const l = (function () {
     // it will trying to use these keys as attributes
     const ALIAS_KEYS = { html: 'innerHTML', text: 'textContent' };
 
+
+    function normalize(init) {
+        if (l.isLGenerator(init)) {
+            init = init().render();
+        } else if (l.isNodeGenerator(init)) {
+            init = init();
+        } else if (l.isL(init)) {
+            init = init.render();
+        } else if (typeof init === 'function') {
+            init = lib.eval(init);
+        }
+        return init;
+    }
+    
     let forceAttrsEnabled = false,
         forcePropsEnabled = false,
         aliasingEnabled = true,
-        proxyEnabled = true;
+        proxyEnabled = false;
     
     class L {
         constructor(name, init1={}, init2, ...children) {
-            init1 = this.normalize(init1);
-            init2 = this.normalize(init2);
+            init1 = normalize(init1);
+            init2 = normalize(init2);
             
             const init2IsNode = l.isNode(init2),
                   init1IsNode = l.isNode(init1),
@@ -89,17 +103,6 @@ const l = (function () {
             this.liftInit(init);
         }
 
-        normalize(init) {
-            if (l.isLGenerator(init)) {
-                init = init().render();
-            } else if (l.isNodeGenerator(init)) {
-                init = init();
-            } else if (l.isL(init)) {
-                init = init.render();
-            }
-            return init;
-        }
-
         add(...others) {
             for (const other of others.flat()) {
                 this.children.push(other);
@@ -139,6 +142,13 @@ const l = (function () {
     const lib = (...args) => {
         if (typeof args[0] === 'string') {
             return new L(...args).render();
+        } else if (typeof args[0] === 'function') {
+            const first = lib.eval(args.shift());
+            if (args.length > 0) {
+                return lib.appendChild(first, ...args);
+            } else {
+                return first;
+            }
         } else {
             return lib.appendChild(...args);
         }
@@ -163,7 +173,7 @@ const l = (function () {
             };
     
     const tagsList = Object.keys(tags);
-          
+    
     for (let i=0; i<tagsList.length; ++i) {
         let key = tagsList[i],
             val = '_nr' + tagsList[i];
@@ -232,6 +242,8 @@ const l = (function () {
                 vals[i] = val.render();
             } else if (l.isNodeGenerator(val)) {
                 vals[i] = val();
+            } else if (typeof val === 'function') {
+                vals[i] = l.eval(val);
             } else if (!l.isNode(val)) {
                 vals[i] = document.createTextNode(val);
             }
@@ -411,9 +423,8 @@ const l = (function () {
     // anything that would not work as an identifier has been prefixed with an underscore
     lib.eval = func => {
         const f = tagDefs + 'var ret = (' + func + ')(); return l.isL(ret) ? ret.render() : ret;';
-        return new Function(f)();
+        return normalize(new Function(f)());
     };
 
     return proxy === null ? lib : proxy;
 }());
-
