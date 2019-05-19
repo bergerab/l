@@ -3,11 +3,11 @@
 const l = (function () {
     // keys in the configuration object that are reserved (won't work as
     // a shortcut to add a prop or attr)
-    const RESERVED_KEYS = ['children', 'props', 'attrs'];
+    const RESERVED_KEYS = {children: true, props: true, attrs: true};
 
     // If these keys are in the root of the configuration object, they will
     // always be interpreted as properties and not attributes
-    const FORCED_PROP_KEYS = ['innerHTML', 'outerHTML', 'textContent', 'hidden', 'dataset', 'isContentEditable'];
+    const FORCED_PROP_KEYS = {innerHTML: true, outerHTML: true, textContent: true, hidden: true, dataset: true, isContentEditable: true};
 
     // Attempt to guess what someone means -- careful when you add to this
     // it will trying to use these keys as attributes
@@ -15,7 +15,8 @@ const l = (function () {
 
     let forceAttrsEnabled = false,
         forcePropsEnabled = false,
-        aliasingEnabled = true;
+        aliasingEnabled = true,
+        proxyEnabled = true;
     
     class L {
         constructor(name, init1={}, init2, ...children) {
@@ -109,14 +110,14 @@ const l = (function () {
         liftInit(init) {
             for (let name in init) {
                 let val = init[name];
-                if (l.aliasingEnabled && ALIAS_KEYS[name] !== undefined) {
+                if (aliasingEnabled && ALIAS_KEYS[name] !== undefined) {
                     name = ALIAS_KEYS[name];
                 }
                 
-                if (!RESERVED_KEYS.includes(name)) {
+                if (!(name in RESERVED_KEYS)) {
                     if (val !== undefined) {
                         const type = typeof val;
-                        if (!forceAttrsEnabled && (forcePropsEnabled || type === 'object' || type === 'function' || FORCED_PROP_KEYS.includes(name))) {
+                        if (!forceAttrsEnabled && (forcePropsEnabled || type === 'object' || type === 'function' || name in FORCED_PROP_KEYS)) {
                             this.props[name] = val;
                         } else {
                             this.attrs[name] = val;
@@ -142,43 +143,72 @@ const l = (function () {
             return lib.appendChild(...args);
         }
     },
-          tags = [ 
-              'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'blockquote', 
-              'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'data', 'datalist',
-              'dd', 'del', 'details', 'dfn', 'dialog', 'div', 'dl', 'dt', 'em', 'embed', 'fieldset', 'figure', 'footer',
-              'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'img',
-              'input', 'label', 'legend', 'li', 'ul', 'link', 'main', 'map', 'mark', 'menu', 'menuitem',
-              'meta', 'meter', 'nav', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'pre', 'progress',
-              'q',  's', 'samp', 'script', 'section', 'select', 'small', 'source', 'span',
-              'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th',
-              'thead', 'time', 'title', 'tr', 'track', 'u', 'var', 'video', 'wbr',
-          ];
+          tags = {
+              a:1, abbr:1, address:1, area:1, article:1, aside:1, audio:1, b:1, base:1, bdi:1, bdo:1, blockquote:1, 
+              body:1, br:1, button:1, canvas:1, caption:1, cite:1, code:1, col:1, colgroup:1, data:1, datalist:1,
+              dd:1, del:1, details:1, dfn:1, dialog:1, div:1, dl:1, dt:1, em:1, embed:1, fieldset:1, figure:1, footer:1,
+              form:1, h1:1, h2:1, h3:1, h4:1, h5:1, h6:1, head:1, header:1, hgroup:1, hr:1, html:1, i:1, iframe:1, img:1,
+              input:1, label:1, legend:1, li:1, ul:1, link:1, main:1, map:1, mark:1, menu:1, menuitem:1,
+              meta:1, meter:1, nav:1, object:1, ol:1, optgroup:1, option:1, output:1, p:1, param:1, pre:1, progress:1,
+              q:1, s:1, samp:1, script:1, section:1, select:1, small:1, source:1, span:1,
+              strong:1, style:1, sub:1, summary:1, sup:1, table:1, tbody:1, td:1, template:1, textarea:1, tfoot:1, th:1,
+              thead:1, time:1, title:1, tr:1, track:1, u:1, var:1, video:1, wbr:1,
+          };
 
-    // TODO: should use proxy if we have it otherwise use old tag way
+    const browserSupportsProxy = typeof window.Proxy === 'function';
     
     let tagDefs = 'var ';
     const tagDefAliases = {
         var: '_var',
             };
-    for (let i=0; i<tags.length; ++i) {
-        let key = tags[i],
-            val = '_nr' + tags[i];
+    
+    const tagsList = Object.keys(tags);
+          
+    for (let i=0; i<tagsList.length; ++i) {
+        let key = tagsList[i],
+            val = '_nr' + tagsList[i];
         if (key in tagDefAliases) {
             key = tagDefAliases[key];
         }
-        tagDefs += key + '=' + 'l.' + val + (i === tags.length - 1 ? ';' : ',');
+        tagDefs += key + '=' + 'l.' + val + (i === tagsList.length - 1 ? ';' : ',');
     }
 
     const tagNoRenderFunc = tag => (...args) => new L(tag, ...args),    
           tagFunc = tag => (...args) => new L(tag, ...args).render();
+    
+    let proxy = null;
+    if (!browserSupportsProxy || !proxyEnabled) {
+        for (const tag of tagsList) {
+            lib[tag] = tagFunc(tag);
 
-    for (const tag of tags) {
-        lib[tag] = tagFunc(tag);
-
-        const nrt = '_nr'+tag;
-        lib[nrt] = tagNoRenderFunc(tag);
-        lib[nrt]._is_l_L_generator = true;
-        lib[tag]._is_l_node_generator = true;
+            const nrt = '_nr' + tag;
+            lib[nrt] = tagNoRenderFunc(tag);
+            lib[nrt]._is_l_L_generator = true;
+            lib[tag]._is_l_node_generator = true;
+        }
+    } else {
+        const cache = {};
+        proxy = new Proxy(lib, {
+            get: function(obj, prop) {
+                if (prop in cache) {
+                    return cache[prop];
+                }
+                
+                if (prop in tags) {
+                    const func = tagFunc(prop);
+                    func._is_l_node_generator = true;
+                    cache[prop] = func;
+                    return func;
+                } else if (prop.startsWith('_nr')) {
+                    const name = prop.substring(3),
+                          func = tagNoRenderFunc(name);
+                    func._is_l_L_generator = true;
+                    cache[prop] = func;
+                    return func;
+                }
+                return obj[prop];
+            },
+        });
     }
 
     const valOf = val => {
@@ -359,9 +389,13 @@ const l = (function () {
     lib.disableAliasing = () => aliasingEnabled = false;
     lib.enableAliasing = () => aliasingEnabled = true;
 
+    // try to use Javascript Proxy if it is supported for l.<tagname>
+    lib.enableProxy = () => proxyEnabled = true;
+    lib.disableProxy = () => proxyEnabled = false;
+
     // taint an object with all the html functions
     lib.import = (o=window, clobber=false) => {
-        for (const tag of tags) {
+        for (const tag of tagsList) {
             if (clobber || o[tag] === undefined) {
                 o[tag] = l[tag];
             }
@@ -380,5 +414,6 @@ const l = (function () {
         return new Function(f)();
     };
 
-    return lib;
+    return proxy === null ? lib : proxy;
 }());
+
