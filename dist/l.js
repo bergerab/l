@@ -1,643 +1,145 @@
-'use strict';
-/*
- * Copyright 2019 Adam Bertrand Berger
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["l"] = factory();
+	else
+		root["l"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./src/l.js":
+/*!******************!*\
+  !*** ./src/l.js ***!
+  \******************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-'strict mode';
+eval("function _typeof(obj) { if (typeof Symbol === \"function\" && typeof Symbol.iterator === \"symbol\") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === \"function\" && obj.constructor === Symbol && obj !== Symbol.prototype ? \"symbol\" : typeof obj; }; } return _typeof(obj); }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }\n\nfunction isNativeReflectConstruct() { if (typeof Reflect === \"undefined\" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === \"function\") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }\n\nfunction _construct(Parent, args, Class) { if (isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }\n\nfunction _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }\n\n/*\n * Copyright 2019 Adam Bertrand Berger\n *\n * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n */\nvar _require = __webpack_require__(/*! ./proxyNode */ \"./src/proxyNode.js\"),\n    HTMLNode = _require.HTMLNode,\n    Document = _require.Document;\n\nvar _require2 = __webpack_require__(/*! ./tags */ \"./src/tags.js\"),\n    tags = _require2.tags;\n\nmodule.exports = function () {\n  var l = function l() {\n    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {\n      args[_key] = arguments[_key];\n    }\n\n    if (args.length === 0) {\n      return null;\n    }\n\n    args[0] = normalize(args[0]);\n\n    if (typeof args[0] === 'string') {\n      return _construct(L, args).render();\n    } else if (typeof args[0] === 'function') {\n      var first = l.eval(args.shift());\n\n      if (args.length > 0) {\n        return l.appendChild.apply(l, [first].concat(args));\n      } else {\n        return first;\n      }\n    } else {\n      return l.appendChild.apply(l, args);\n    }\n  };\n\n  var window = this,\n      document = null,\n      Proxy = Proxy || null,\n      HTMLDocument = null,\n      Element = null,\n      usingProxyDocument = false;\n\n  function setupWindowProps(wnd) {\n    window = wnd;\n\n    if (window === undefined || window.document === undefined) {\n      document = new Document(); // use fake document if there is none\n\n      usingProxyDocument = true;\n    } else {\n      document = window.document;\n      usingProxyDocument = false;\n    }\n\n    if (window !== undefined) {\n      Proxy = window.Proxy;\n      HTMLDocument = window.HTMLDocument;\n      Element = window.Element;\n    }\n  }\n\n  setupWindowProps(window); // keys in the configuration object that are reserved (won't work as\n  // a shortcut to add a prop or attr)\n\n  var RESERVED_KEYS = {\n    children: true,\n    props: true,\n    attrs: true\n  }; // If these keys are in the root of the configuration object, they will\n  // always be interpreted as properties and not attributes\n\n  var FORCED_PROP_KEYS = {\n    innerHTML: true,\n    innerText: true,\n    outerHTML: true,\n    textContent: true,\n    hidden: true,\n    dataset: true,\n    isContentEditable: true\n  }; // Attempt to guess what someone means -- careful when you add to this\n  // it will trying to use these keys as attributes\n\n  var ALIAS_KEYS = {\n    html: 'innerHTML',\n    text: 'textContent'\n  };\n\n  function normalize(init) {\n    if (l.isLGenerator(init)) {\n      init = init().render();\n    } else if (l.isNodeGenerator(init)) {\n      init = init();\n    } else if (l.isL(init)) {\n      init = init.render();\n    } else if (typeof init === 'function') {\n      init = l.eval(init);\n    }\n\n    return init;\n  }\n\n  var forceAttrsEnabled = false,\n      forcePropsEnabled = false,\n      aliasingEnabled = true,\n      proxyEnabled = false;\n\n  var L =\n  /*#__PURE__*/\n  function () {\n    function L(name) {\n      var init1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};\n      var init2 = arguments.length > 2 ? arguments[2] : undefined;\n\n      for (var _len2 = arguments.length, children = new Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {\n        children[_key2 - 3] = arguments[_key2];\n      }\n\n      _classCallCheck(this, L);\n\n      init1 = normalize(init1);\n      init2 = normalize(init2);\n\n      var init2IsNode = l.isNode(init2),\n          init1IsNode = l.isNode(init1),\n          init2Type = _typeof(init2),\n          init1Type = _typeof(init1);\n\n      var init = {};\n\n      if (!init1IsNode) {\n        if (init2IsNode || _typeof(init2) !== 'object' && init2 !== undefined) {\n          init = _typeof(init1) === 'object' ? init1 : {};\n        } else {\n          init = init2 || init1;\n        }\n      }\n\n      if (Array.isArray(init1)) {\n        if (init2 === undefined) {\n          init = {\n            children: init1\n          };\n        } else {\n          init.children = init1;\n        }\n      } else if (init1IsNode) {\n        if (init2 === undefined) {\n          init = {\n            children: [init1]\n          };\n        } else {\n          init.children = [init1];\n        }\n      } else if (init1Type !== 'object') {\n        if (init2 === undefined) {\n          init = {\n            props: {\n              innerHTML: init\n            }\n          };\n        } else {\n          init.props = init.props || {};\n          init.props.innerHTML = init1;\n        }\n      }\n\n      var init2IsChild = init2IsNode || _typeof(init2) !== 'object' && init2 !== undefined;\n\n      if (init2IsChild || children.length > 0) {\n        if (init2IsChild) {\n          children = [init2].concat(children);\n        }\n\n        if (init.children !== undefined) {\n          init.children = init.children.concat(children);\n        } else {\n          init.children = children;\n        }\n      }\n\n      this.name = name;\n      this.children = init.children || [];\n      this.props = init.props || {};\n      this.attrs = init.attrs || {};\n      this._is_l_L = true;\n      this.liftInit(init);\n    }\n\n    _createClass(L, [{\n      key: \"add\",\n      value: function add() {\n        for (var _len3 = arguments.length, others = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {\n          others[_key3] = arguments[_key3];\n        }\n\n        var _iteratorNormalCompletion = true;\n        var _didIteratorError = false;\n        var _iteratorError = undefined;\n\n        try {\n          for (var _iterator = others.flat()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {\n            var other = _step.value;\n            this.children.push(other);\n          }\n        } catch (err) {\n          _didIteratorError = true;\n          _iteratorError = err;\n        } finally {\n          try {\n            if (!_iteratorNormalCompletion && _iterator[\"return\"] != null) {\n              _iterator[\"return\"]();\n            }\n          } finally {\n            if (_didIteratorError) {\n              throw _iteratorError;\n            }\n          }\n        }\n\n        return this;\n      }\n    }, {\n      key: \"liftInit\",\n      value: function liftInit(init) {\n        for (var name in init) {\n          var val = init[name];\n\n          if (aliasingEnabled && ALIAS_KEYS[name] !== undefined) {\n            name = ALIAS_KEYS[name];\n          }\n\n          if (!(name in RESERVED_KEYS)) {\n            if (val !== undefined) {\n              var type = _typeof(val);\n\n              if (!forceAttrsEnabled && (forcePropsEnabled || type === 'object' || type === 'function' || name in FORCED_PROP_KEYS)) {\n                this.props[name] = val;\n              } else {\n                this.attrs[name] = val;\n              }\n            }\n          }\n        }\n      }\n    }, {\n      key: \"render\",\n      value: function render() {\n        var tag = document.createElement(this.name);\n        l.setProps(tag, this.props);\n        l.setAttrs(tag, this.attrs);\n        l.addChildren(tag, this.children);\n        return tag;\n      }\n    }]);\n\n    return L;\n  }();\n\n  var supportsProxy = function supportsProxy() {\n    return typeof Proxy === 'function';\n  };\n  /*\n   * Because programs like webpack only run in 'strict mode',\n   * there is no way to use the \"deprecated\" with statement.\n   * it is not officially deprecated, its just that the \n   * community doesn't like it so much that it has been disabled in\n   * strict mode.\n   *\n   * I'll continue using this hack instead. My integration tests show\n   * that the difference in speed is not great (usually < 1 ms)\n   */\n\n\n  var tagDefs = 'var ';\n  var tagDefAliases = {\n    \"var\": '_var'\n  };\n  var _iteratorNormalCompletion2 = true;\n  var _didIteratorError2 = false;\n  var _iteratorError2 = undefined;\n\n  try {\n    for (var _iterator2 = tags.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {\n      var _tag2 = _step2.value;\n      var key = _tag2,\n          val = '_nr' + _tag2;\n\n      if (key in tagDefAliases) {\n        key = tagDefAliases[key];\n      }\n\n      tagDefs += key + '=' + 'l.' + val + ',';\n    }\n  } catch (err) {\n    _didIteratorError2 = true;\n    _iteratorError2 = err;\n  } finally {\n    try {\n      if (!_iteratorNormalCompletion2 && _iterator2[\"return\"] != null) {\n        _iterator2[\"return\"]();\n      }\n    } finally {\n      if (_didIteratorError2) {\n        throw _iteratorError2;\n      }\n    }\n  }\n\n  tagDefs = tagDefs.substring(0, tagDefs.length - 1) + ';';\n\n  var tagNoRenderFunc = function tagNoRenderFunc(tag) {\n    return function () {\n      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {\n        args[_key4] = arguments[_key4];\n      }\n\n      return _construct(L, [tag].concat(args));\n    };\n  },\n      tagFunc = function tagFunc(tag) {\n    return function () {\n      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {\n        args[_key5] = arguments[_key5];\n      }\n\n      return _construct(L, [tag].concat(args)).render();\n    };\n  };\n\n  var proxy = null;\n\n  if (!supportsProxy() || !proxyEnabled) {\n    var _iteratorNormalCompletion3 = true;\n    var _didIteratorError3 = false;\n    var _iteratorError3 = undefined;\n\n    try {\n      for (var _iterator3 = tags.values()[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {\n        var tag = _step3.value;\n        l[tag] = tagFunc(tag);\n        var nrt = '_nr' + tag;\n        l[nrt] = tagNoRenderFunc(tag);\n        l[nrt]._is_l_L_generator = true;\n        l[tag]._is_l_node_generator = true;\n      }\n    } catch (err) {\n      _didIteratorError3 = true;\n      _iteratorError3 = err;\n    } finally {\n      try {\n        if (!_iteratorNormalCompletion3 && _iterator3[\"return\"] != null) {\n          _iterator3[\"return\"]();\n        }\n      } finally {\n        if (_didIteratorError3) {\n          throw _iteratorError3;\n        }\n      }\n    }\n  } else {\n    var cache = {};\n    proxy = new Proxy(l, {\n      get: function get(obj, prop) {\n        if (prop in cache) {\n          return cache[prop];\n        }\n\n        if (tags.has(prop)) {\n          var func = tagFunc(prop);\n          func._is_l_node_generator = true;\n          cache[prop] = func;\n          return func;\n        } else if (prop.startsWith('_nr')) {\n          var name = prop.substring(3),\n              _func = tagNoRenderFunc(name);\n\n          _func._is_l_L_generator = true;\n          cache[prop] = _func;\n          return _func;\n        }\n\n        return obj[prop];\n      }\n    });\n  }\n\n  var valOf = function valOf(val) {\n    if (typeof val === 'function') {\n      return val();\n    }\n\n    return val;\n  };\n\n  l.isNodeGenerator = function (o) {\n    return typeof o === 'function' && o._is_l_node_generator;\n  };\n\n  l.isLGenerator = function (o) {\n    return typeof o === 'function' && o._is_l_L_generator;\n  };\n\n  l.isL = function (o) {\n    return _typeof(o) === 'object' && o instanceof L;\n  };\n\n  l.nodify = function () {\n    for (var _len6 = arguments.length, vals = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {\n      vals[_key6] = arguments[_key6];\n    }\n\n    vals = vals.flat();\n\n    for (var i = 0; i < vals.length; ++i) {\n      var val = vals[i];\n\n      if (l.isLGenerator(val)) {\n        vals[i] = val().render();\n      } else if (l.isL(val)) {\n        vals[i] = val.render();\n      } else if (l.isNodeGenerator(val)) {\n        vals[i] = val();\n      } else if (typeof val === 'function') {\n        vals[i] = l.eval(val);\n      } else if (!l.isNode(val)) {\n        vals[i] = document.createTextNode(val);\n      }\n    }\n\n    return vals;\n  };\n\n  l.appendChild = function (parent) {\n    for (var _len7 = arguments.length, children = new Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {\n      children[_key7 - 1] = arguments[_key7];\n    }\n\n    l.nodify(children.flat()).forEach(function (child) {\n      return parent.appendChild(child);\n    });\n    return parent;\n  };\n\n  l.appendChildren = l.appendChild;\n\n  l.appendBody = function () {\n    for (var _len8 = arguments.length, children = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {\n      children[_key8] = arguments[_key8];\n    }\n\n    return l.appendChild.apply(l, [document.body].concat(children));\n  };\n\n  l.prependChild = function (parent) {\n    for (var _len9 = arguments.length, children = new Array(_len9 > 1 ? _len9 - 1 : 0), _key9 = 1; _key9 < _len9; _key9++) {\n      children[_key9 - 1] = arguments[_key9];\n    }\n\n    l.nodify(children.flat()).forEach(function (child) {\n      return parent.insertAdjacentElement('afterBegin', child);\n    });\n    return parent;\n  };\n\n  l.prependChildren = l.prependChild;\n\n  l.prependBody = function () {\n    for (var _len10 = arguments.length, children = new Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {\n      children[_key10] = arguments[_key10];\n    }\n\n    return l.prependChild.apply(l, [document.body].concat(children));\n  };\n\n  l.insertChildAfter = function (target) {\n    for (var _len11 = arguments.length, nodes = new Array(_len11 > 1 ? _len11 - 1 : 0), _key11 = 1; _key11 < _len11; _key11++) {\n      nodes[_key11 - 1] = arguments[_key11];\n    }\n\n    l.nodify(nodes.flat()).forEach(function (node) {\n      return target.insertAdjacentElement('afterEnd', node);\n    });\n    return target;\n  };\n\n  l.insertChildrenAfter = l.insertChildAfter;\n\n  l.insertChildBefore = function (target) {\n    for (var _len12 = arguments.length, nodes = new Array(_len12 > 1 ? _len12 - 1 : 0), _key12 = 1; _key12 < _len12; _key12++) {\n      nodes[_key12 - 1] = arguments[_key12];\n    }\n\n    l.nodify(nodes.flat()).forEach(function (node) {\n      return target.insertAdjacentElement('beforeBegin', node);\n    });\n    return target;\n  };\n\n  l.insertChildrenBefore = l.insertChildBefore;\n\n  l.setProp = function (target, name, val) {\n    if (_typeof(val) === 'object') {\n      if (_typeof(target[name]) === 'object') {\n        for (var key in val) {\n          target[name][key] = val[key];\n        }\n      } else {\n        target[name] = val;\n      }\n    } else {\n      target[name] = val;\n    }\n\n    return target;\n  };\n\n  l.setProps = function (target) {\n    var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};\n\n    for (var name in props) {\n      l.setProp(target, name, props[name]);\n    }\n\n    return target;\n  };\n\n  l.setProperties = l.setProps;\n\n  l.setAttr = function (target, name, val) {\n    if (val !== null && val !== '') {\n      target.setAttribute(name, valOf(val));\n    }\n\n    return target;\n  };\n\n  l.setAttribute = l.setAttr;\n\n  l.setStyle = function (target, style) {\n    return l.setProp(target, 'style', style);\n  };\n\n  l.setAttrs = function (target) {\n    var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};\n\n    for (var name in attrs) {\n      l.setAttr(target, name, attrs[name]);\n    }\n\n    return target;\n  };\n\n  l.setAttributes = l.setAttrs;\n\n  l.addChildren = function (target) {\n    for (var _len13 = arguments.length, children = new Array(_len13 > 1 ? _len13 - 1 : 0), _key13 = 1; _key13 < _len13; _key13++) {\n      children[_key13 - 1] = arguments[_key13];\n    }\n\n    l.appendChild.apply(l, [target].concat(children));\n    return target;\n  };\n\n  l.addChild = l.addChildren;\n\n  l.str = function () {\n    var ret = l.apply(void 0, arguments);\n\n    if (l.isNode(ret)) {\n      return ret.outerHTML;\n    }\n\n    return '';\n  }; // start of things that can be removed\n\n\n  l.removeAttr = function (target, attr) {\n    target.removeAttribute(attr);\n    return target;\n  };\n\n  l.removeAttribute = l.removeAttr;\n\n  l.removeAttrs = function (target) {\n    while (target.attributes.length > 0) {\n      target.removeAttributeNode(target.attributes[0]);\n    }\n\n    return target;\n  };\n\n  l.removeAttributes = l.removeAttrs;\n\n  l.removeChildren = function (target) {\n    while (target.firstChild !== null) {\n      target.firstChild.remove();\n    }\n\n    return target;\n  };\n\n  l.removeChild = l.removeChildren;\n\n  l.remove = function (target) {\n    target.remove();\n    return target;\n  };\n\n  l.removeClass = function (target) {\n    for (var _len14 = arguments.length, classes = new Array(_len14 > 1 ? _len14 - 1 : 0), _key14 = 1; _key14 < _len14; _key14++) {\n      classes[_key14 - 1] = arguments[_key14];\n    }\n\n    classes.forEach(function (_class) {\n      return target.classList.remove(_class);\n    });\n    return target;\n  };\n\n  l.removeClasses = l.removeClass;\n\n  l.addClass = function (target) {\n    for (var _len15 = arguments.length, classes = new Array(_len15 > 1 ? _len15 - 1 : 0), _key15 = 1; _key15 < _len15; _key15++) {\n      classes[_key15 - 1] = arguments[_key15];\n    }\n\n    classes.forEach(function (_class, i) {\n      return target.className += (target.className.length === 0 ? '' : ' ') + _class;\n    });\n    return target;\n  };\n\n  l.addClasses = l.addClass;\n\n  l.addId = function (target) {\n    for (var _len16 = arguments.length, ids = new Array(_len16 > 1 ? _len16 - 1 : 0), _key16 = 1; _key16 < _len16; _key16++) {\n      ids[_key16 - 1] = arguments[_key16];\n    }\n\n    ids.forEach(function (id, i) {\n      return target.id += (target.id.length === 0 ? '' : ' ') + id;\n    });\n    return target;\n  };\n\n  l.addIds = l.addId;\n\n  l.selectByClass = function (className) {\n    return document.getElementsByClassName(className);\n  };\n\n  l.selectById = function (id) {\n    return document.getElementById(id);\n  };\n\n  l.selectFirst = function (selector) {\n    return document.querySelector(selector);\n  };\n\n  l.selectAll = function (selector) {\n    return document.querySelectorAll(selector);\n  }; // end of things that can be removed\n\n\n  l.isNode = function (o) {\n    if (usingProxyDocument) {\n      return o != null && o instanceof HTMLNode;\n    } else {\n      return Element != null && HTMLDocument != null && (o instanceof Element || o instanceof HTMLDocument);\n    }\n  }; // force everything in config object to be an attribute\n\n\n  l.forceAttrs = function (b) {\n    return forceAttrsEnabled = b;\n  }; // force everything in the config object to be a prop\n\n\n  l.forceProps = function (b) {\n    return forcePropsEnabled = b;\n  }; // enable/disable aliasing of config object names\n\n\n  l.disableAliasing = function () {\n    return aliasingEnabled = false;\n  };\n\n  l.enableAliasing = function () {\n    return aliasingEnabled = true;\n  }; // try to use Javascript Proxy if it is supported for l.<tagname>\n\n\n  l.enableProxy = function () {\n    return proxyEnabled = true;\n  };\n\n  l.disableProxy = function () {\n    return proxyEnabled = false;\n  }; // taint an object with all the html functions\n\n\n  l[\"import\"] = function () {\n    var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : window;\n    var clobber = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;\n    var _iteratorNormalCompletion4 = true;\n    var _didIteratorError4 = false;\n    var _iteratorError4 = undefined;\n\n    try {\n      for (var _iterator4 = tags.values()[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {\n        var _tag = _step4.value;\n\n        if (clobber || o[_tag] === undefined) {\n          o[_tag] = l[_tag];\n        }\n      }\n    } catch (err) {\n      _didIteratorError4 = true;\n      _iteratorError4 = err;\n    } finally {\n      try {\n        if (!_iteratorNormalCompletion4 && _iterator4[\"return\"] != null) {\n          _iterator4[\"return\"]();\n        }\n      } finally {\n        if (_didIteratorError4) {\n          throw _iteratorError4;\n        }\n      }\n    }\n\n    return o;\n  };\n\n  l.injectWindow = function (mock) {\n    window = mock;\n    document = window.document;\n    setupWindowProps(mock);\n  }; // current issue: l.div('oij', 3) \n  // black magic function that lets you use html tags as function names\n  // without tainting global namespace\n  // anything that would not work as an identifier has been prefixed with an underscore\n\n\n  l.eval = function (func) {\n    var f = tagDefs + 'var ret = (' + func + ')(); return l.isL(ret) ? ret.render() : ret;';\n    return normalize(new Function('l', f)(l));\n  };\n\n  return proxy === null ? l : proxy;\n}();\n\n//# sourceURL=webpack://l/./src/l.js?");
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+/***/ }),
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+/***/ "./src/proxyNode.js":
+/*!**************************!*\
+  !*** ./src/proxyNode.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+eval("function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }\n\nfunction _typeof(obj) { if (typeof Symbol === \"function\" && typeof Symbol.iterator === \"symbol\") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === \"function\" && obj.constructor === Symbol && obj !== Symbol.prototype ? \"symbol\" : typeof obj; }; } return _typeof(obj); }\n\n/*\n * Copyright 2019 Adam Bertrand Berger\n *\n * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n */\n\n/*\n * If environment doesn't have `document` use these as HTMLElements\n */\nvar nodeId = 0;\nvar proxyToNode = new Map();\n\nfunction HTMLNode(dom, nodeName) {\n  var _this = this;\n\n  var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;\n\n  if (type !== 1 && type !== 3) {\n    throw new Error('Only type of ELEMENT_NODE (1) and TEXT_NODE (3) are supported');\n  }\n\n  if (type === 3) {\n    nodeName = '#text';\n  }\n\n  if (!nodeName) {\n    throw new Error('You must specify a `nodeName`');\n  }\n\n  this.id = ++nodeId;\n  this.content = '';\n  this.node = {\n    attributes: {},\n    type: type,\n    // can be 1 for element node or 3 for text node (for our purposes)\n    nodeName: nodeName.toUpperCase(),\n    style: new Proxy({}, {\n      set: function set(obj, prop, val) {\n        var cssName = prop.replace(/([A-Z])/g, '-$1').toLowerCase();\n        var css = \"\".concat(cssName, \": \").concat(val, \";\");\n\n        if (_this.node.attributes.style != null) {\n          _this.node.attributes.style += ' ' + css;\n        } else {\n          _this.node.attributes.style = css;\n        }\n\n        obj[prop] = val;\n      }\n    }),\n    dataset: new Proxy({}, {\n      set: function set(obj, prop, val) {\n        var dataName = 'data-' + prop.replace(/([A-Z])/g, '-$1').toLowerCase();\n        _this.node.attributes[dataName] = val;\n        obj[prop] = val;\n      }\n    }),\n    children: []\n  };\n  var SELF_CLOSING_NODE_NAMES = new Set(['META', 'BR', 'IMG', 'INPUT', 'HR']); // When these names are set, they will not be assigned to an attribute\n  // only a prop.\n\n  var PROPS = new Set(['innerHTML', 'textContent', 'isContentEditable', 'nodeValue']);\n  var HTML = new Set(['innerHTML', 'textContent', 'innerText']);\n  var TEXT = new Set(['textContent', 'nodeValue']);\n\n  var outerHTML = function outerHTML() {\n    if (type === 3) {\n      return _this.content;\n    }\n\n    var name = nodeName.toLowerCase();\n    var attrsList = Object.keys(_this.node.attributes),\n        attrs = attrsList.length > 0 ? ' ' : '';\n\n    for (var i = 0; i < attrsList.length; ++i) {\n      var attrName = attrsList[i],\n          attrVal = _this.node.attributes[attrName];\n      attrs += \"\".concat(attrName, \"=\\\"\").concat(attrVal, \"\\\"\");\n\n      if (i !== attrsList.length - 1) {\n        attrs += ' ';\n      }\n    }\n\n    var html = \"<\".concat(name).concat(attrs, \">\");\n\n    if (!SELF_CLOSING_NODE_NAMES.has(_this.node.nodeName)) {\n      html += _this.content;\n      var _iteratorNormalCompletion = true;\n      var _didIteratorError = false;\n      var _iteratorError = undefined;\n\n      try {\n        for (var _iterator = _this.node.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {\n          var child = _step.value;\n          html += child.outerHTML;\n        }\n      } catch (err) {\n        _didIteratorError = true;\n        _iteratorError = err;\n      } finally {\n        try {\n          if (!_iteratorNormalCompletion && _iterator[\"return\"] != null) {\n            _iterator[\"return\"]();\n          }\n        } finally {\n          if (_didIteratorError) {\n            throw _iteratorError;\n          }\n        }\n      }\n\n      html += \"</\".concat(name, \">\");\n    }\n\n    return html;\n  };\n\n  var setAttribute = function setAttribute(name, val) {\n    _this.node.attributes[name] = val;\n  };\n\n  this.usesId = function (id) {\n    if (_this.id === id) {\n      return true;\n    }\n\n    var _iteratorNormalCompletion2 = true;\n    var _didIteratorError2 = false;\n    var _iteratorError2 = undefined;\n\n    try {\n      for (var _iterator2 = _this.node.children[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {\n        var child = _step2.value;\n\n        if (child.usesId(id)) {\n          return true;\n        }\n      }\n    } catch (err) {\n      _didIteratorError2 = true;\n      _iteratorError2 = err;\n    } finally {\n      try {\n        if (!_iteratorNormalCompletion2 && _iterator2[\"return\"] != null) {\n          _iterator2[\"return\"]();\n        }\n      } finally {\n        if (_didIteratorError2) {\n          throw _iteratorError2;\n        }\n      }\n    }\n\n    return false;\n  };\n\n  this.appendChild = function (proxyNode) {\n    if (proxyNode == null) {\n      return;\n    }\n\n    var node = proxyToNode.get(proxyNode);\n\n    if (_this.usesId(node.id) || node.usesId(_this.id)) {\n      throw new Error('You can\\'t append a child which contains its parent.');\n    }\n\n    var _iteratorNormalCompletion3 = true;\n    var _didIteratorError3 = false;\n    var _iteratorError3 = undefined;\n\n    try {\n      for (var _iterator3 = _this.node.children[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {\n        var child = _step3.value;\n        // don't add the same node twice\n        child = proxyToNode.get(child);\n\n        if (node.id === child.id) {\n          return;\n        }\n      }\n    } catch (err) {\n      _didIteratorError3 = true;\n      _iteratorError3 = err;\n    } finally {\n      try {\n        if (!_iteratorNormalCompletion3 && _iterator3[\"return\"] != null) {\n          _iterator3[\"return\"]();\n        }\n      } finally {\n        if (_didIteratorError3) {\n          throw _iteratorError3;\n        }\n      }\n    }\n\n    _this.node.children.push(proxyNode);\n  };\n\n  var readonlyProps = new Set(['attributes', 'nodeName', 'children', 'outerHTML', 'setAttribute']);\n  var proxy = new Proxy(this, {\n    get: function get(obj, prop) {\n      if (prop === 'outerHTML') {\n        return outerHTML();\n      }\n\n      if (prop === 'setAttribute') {\n        return setAttribute;\n      }\n\n      if (HTML.has(prop)) {\n        if (type === 1) {\n          return _this.content;\n        } else {\n          return undefined;\n        }\n      }\n\n      if (TEXT.has(prop)) {\n        if (type === 3) {\n          return _this.content;\n        } else {\n          return undefined;\n        }\n      }\n\n      if (prop in obj && prop !== 'id') {\n        return obj[prop];\n      }\n\n      return obj.node[prop];\n    },\n    set: function set(obj, prop, val) {\n      if (prop in readonlyProps) {\n        throw new Error('You can\\'t set `' + prop + '` on nodes');\n      }\n\n      if (_typeof(val) !== 'object' && typeof val !== 'function' && !PROPS.has(prop)) {\n        obj.node.attributes[prop] = val;\n        obj.node[prop] = val;\n      } else {\n        if (HTML.has(prop) && type === 1) {\n          _this.content = val;\n        } else if (TEXT.has(prop) && type === 3) {\n          _this.content = val;\n        } else {\n          /*\n            if (prop === 'style') {\n            let css = '';\n            for (const name in val) {\n            const cssName = name.replace(/([A-Z])/g, '-$1').toLowerCase();\n            css += `${cssName}: ${val[name]}; `;\n            }\n            css = css.substring(0, css.length - 1);\n             if (obj.node.attributes.style != null) {\n            obj.node.attributes.style += css;\n            } else {\n            obj.node.attributes.style = css;\n            }\n            } else if (prop === 'dataset') {\n            for (const name in val) {\n            \n            }\n            }\n          */\n          obj.node[prop] = val;\n        }\n      }\n\n      return val;\n    }\n  });\n  proxyToNode.set(proxy, this);\n  return proxy;\n}\n\nvar Document =\n/*#__PURE__*/\nfunction () {\n  function Document() {\n    _classCallCheck(this, Document);\n  }\n\n  _createClass(Document, [{\n    key: \"createTextNode\",\n    value: function createTextNode(text) {\n      var node = new HTMLNode(this, null, 3);\n      node.nodeValue = text;\n      return node;\n    }\n  }, {\n    key: \"createElement\",\n    value: function createElement(tagName) {\n      return new HTMLNode(this, tagName, 1);\n    }\n  }]);\n\n  return Document;\n}();\n\nif (Array.prototype.flat === undefined) {\n  Array.prototype.flat = function () {\n    var flattened = [];\n\n    for (var i = 0; i < this.length; ++i) {\n      var item = this[i];\n\n      if (Array.isArray(item)) {\n        flattened = flattened.concat(item);\n      } else {\n        flattened.push(item);\n      }\n    }\n\n    return flattened;\n  };\n}\n\nif (Array.prototype.forEach === undefined) {\n  Array.prototype.forEach = function (func) {\n    for (var i = 0; i < this.length; ++i) {\n      func(this[i], i);\n    }\n\n    return this;\n  };\n}\n\nmodule.exports = {\n  HTMLNode: HTMLNode,\n  Document: Document\n};\n\n//# sourceURL=webpack://l/./src/proxyNode.js?");
 
-var l = function () {
-    // keys in the configuration object that are reserved (won't work as
-    // a shortcut to add a prop or attr)
-    var RESERVED_KEYS = { children: true, props: true, attrs: true };
+/***/ }),
 
-    // If these keys are in the root of the configuration object, they will
-    // always be interpreted as properties and not attributes
-    var FORCED_PROP_KEYS = { innerHTML: true, outerHTML: true, textContent: true, hidden: true, dataset: true, isContentEditable: true };
+/***/ "./src/tags.js":
+/*!*********************!*\
+  !*** ./src/tags.js ***!
+  \*********************/
+/*! exports provided: tags */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-    // Attempt to guess what someone means -- careful when you add to this
-    // it will trying to use these keys as attributes
-    var ALIAS_KEYS = { html: 'innerHTML', text: 'textContent' };
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"tags\", function() { return tags; });\nvar tags = new Set(['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div', 'dl', 'dt', 'em', 'embed', 'fieldset', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'img', 'input', 'label', 'legend', 'li', 'ul', 'link', 'main', 'map', 'mark', 'menu', 'menuitem', 'meta', 'meter', 'nav', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'pre', 'progress', 'q', 's', 'samp', 'script', 'section', 'select', 'small', 'source', 'span', 'noscript', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track', 'u', 'var', 'video', 'wbr']);\n\n//# sourceURL=webpack://l/./src/tags.js?");
 
-    function normalize(init) {
-        if (l.isLGenerator(init)) {
-            init = init().render();
-        } else if (l.isNodeGenerator(init)) {
-            init = init();
-        } else if (l.isL(init)) {
-            init = init.render();
-        } else if (typeof init === 'function') {
-            init = lib.eval(init);
-        }
-        return init;
-    }
+/***/ }),
 
-    var forceAttrsEnabled = false,
-        forcePropsEnabled = false,
-        aliasingEnabled = true,
-        proxyEnabled = false;
+/***/ 0:
+/*!************************!*\
+  !*** multi ./src/l.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-    var L = function () {
-        function L(name) {
-            for (var _len = arguments.length, children = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
-                children[_key - 3] = arguments[_key];
-            }
+eval("module.exports = __webpack_require__(/*! ./src/l.js */\"./src/l.js\");\n\n\n//# sourceURL=webpack://l/multi_./src/l.js?");
 
-            var init1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var init2 = arguments[2];
+/***/ })
 
-            _classCallCheck(this, L);
-
-            init1 = normalize(init1);
-            init2 = normalize(init2);
-
-            var init2IsNode = l.isNode(init2),
-                init1IsNode = l.isNode(init1),
-                init2Type = typeof init2 === 'undefined' ? 'undefined' : _typeof(init2),
-                init1Type = typeof init1 === 'undefined' ? 'undefined' : _typeof(init1);
-
-            var init = {};
-            if (!init1IsNode) {
-                if (init2IsNode || (typeof init2 === 'undefined' ? 'undefined' : _typeof(init2)) !== 'object' && init2 !== undefined) {
-                    init = (typeof init1 === 'undefined' ? 'undefined' : _typeof(init1)) === 'object' ? init1 : {};
-                } else {
-                    init = init2 || init1;
-                }
-            }
-
-            if (Array.isArray(init1)) {
-                if (init2 === undefined) {
-                    init = {
-                        children: init1
-                    };
-                } else {
-                    init.children = init1;
-                }
-            } else if (init1IsNode) {
-                if (init2 === undefined) {
-                    init = {
-                        children: [init1]
-                    };
-                } else {
-                    init.children = [init1];
-                }
-            } else if (init1Type !== 'object') {
-                if (init2 === undefined) {
-                    init = {
-                        props: {
-                            innerHTML: init
-                        }
-                    };
-                } else {
-                    init.props = init.props || {};
-                    init.props.innerHTML = init1;
-                }
-            }
-
-            var init2IsChild = init2IsNode || (typeof init2 === 'undefined' ? 'undefined' : _typeof(init2)) !== 'object' && init2 !== undefined;
-            if (init2IsChild || children.length > 0) {
-                if (init2IsChild) {
-                    children = [init2].concat(children);
-                }
-
-                if (init.children !== undefined) {
-                    init.children = init.children.concat(children);
-                } else {
-                    init.children = children;
-                }
-            }
-
-            this.name = name;
-            this.children = init.children || [];
-            this.props = init.props || {};
-            this.attrs = init.attrs || {};
-
-            this._is_l_L = true;
-
-            this.liftInit(init);
-        }
-
-        _createClass(L, [{
-            key: 'add',
-            value: function add() {
-                for (var _len2 = arguments.length, others = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-                    others[_key2] = arguments[_key2];
-                }
-
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = others.flat()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var other = _step.value;
-
-                        this.children.push(other);
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
-                }
-
-                return this;
-            }
-        }, {
-            key: 'liftInit',
-            value: function liftInit(init) {
-                for (var name in init) {
-                    var val = init[name];
-                    if (aliasingEnabled && ALIAS_KEYS[name] !== undefined) {
-                        name = ALIAS_KEYS[name];
-                    }
-
-                    if (!(name in RESERVED_KEYS)) {
-                        if (val !== undefined) {
-                            var type = typeof val === 'undefined' ? 'undefined' : _typeof(val);
-                            if (!forceAttrsEnabled && (forcePropsEnabled || type === 'object' || type === 'function' || name in FORCED_PROP_KEYS)) {
-                                this.props[name] = val;
-                            } else {
-                                this.attrs[name] = val;
-                            }
-                        }
-                    }
-                }
-            }
-        }, {
-            key: 'render',
-            value: function render() {
-                var tag = document.createElement(this.name);
-                lib.setProps(tag, this.props);
-                lib.setAttrs(tag, this.attrs);
-                lib.addChildren(tag, this.children);
-                return tag;
-            }
-        }]);
-
-        return L;
-    }();
-
-    var lib = function lib() {
-        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-            args[_key3] = arguments[_key3];
-        }
-
-        if (args.length === 0) {
-            return null;
-        }
-
-        args[0] = normalize(args[0]);
-        if (typeof args[0] === 'string') {
-            return new (Function.prototype.bind.apply(L, [null].concat(args)))().render();
-        } else if (typeof args[0] === 'function') {
-            var first = lib.eval(args.shift());
-            if (args.length > 0) {
-                return lib.appendChild.apply(lib, [first].concat(args));
-            } else {
-                return first;
-            }
-        } else {
-            return lib.appendChild.apply(lib, args);
-        }
-    },
-        tags = {
-        a: 1, abbr: 1, address: 1, area: 1, article: 1, aside: 1, audio: 1, b: 1, base: 1, bdi: 1, bdo: 1, blockquote: 1,
-        body: 1, br: 1, button: 1, canvas: 1, caption: 1, cite: 1, code: 1, col: 1, colgroup: 1, data: 1, datalist: 1,
-        dd: 1, del: 1, details: 1, dfn: 1, dialog: 1, div: 1, dl: 1, dt: 1, em: 1, embed: 1, fieldset: 1, figure: 1, footer: 1,
-        form: 1, h1: 1, h2: 1, h3: 1, h4: 1, h5: 1, h6: 1, head: 1, header: 1, hgroup: 1, hr: 1, html: 1, i: 1, iframe: 1, img: 1,
-        input: 1, label: 1, legend: 1, li: 1, ul: 1, link: 1, main: 1, map: 1, mark: 1, menu: 1, menuitem: 1,
-        meta: 1, meter: 1, nav: 1, object: 1, ol: 1, optgroup: 1, option: 1, output: 1, p: 1, param: 1, pre: 1, progress: 1,
-        q: 1, s: 1, samp: 1, script: 1, section: 1, select: 1, small: 1, source: 1, span: 1,
-        strong: 1, style: 1, sub: 1, summary: 1, sup: 1, table: 1, tbody: 1, td: 1, template: 1, textarea: 1, tfoot: 1, th: 1,
-        thead: 1, time: 1, title: 1, tr: 1, track: 1, u: 1, var: 1, video: 1, wbr: 1
-    };
-
-    var browserSupportsProxy = typeof window.Proxy === 'function';
-
-    var tagDefs = 'var ';
-    var tagDefAliases = {
-        var: '_var'
-    };
-
-    var tagsList = Object.keys(tags);
-
-    for (var i = 0; i < tagsList.length; ++i) {
-        var key = tagsList[i],
-            val = '_nr' + tagsList[i];
-        if (key in tagDefAliases) {
-            key = tagDefAliases[key];
-        }
-        tagDefs += key + '=' + 'l.' + val + (i === tagsList.length - 1 ? ';' : ',');
-    }
-
-    var tagNoRenderFunc = function tagNoRenderFunc(tag) {
-        return function () {
-            for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-                args[_key4] = arguments[_key4];
-            }
-
-            return new (Function.prototype.bind.apply(L, [null].concat([tag], args)))();
-        };
-    },
-        tagFunc = function tagFunc(tag) {
-        return function () {
-            for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-                args[_key5] = arguments[_key5];
-            }
-
-            return new (Function.prototype.bind.apply(L, [null].concat([tag], args)))().render();
-        };
-    };
-
-    var proxy = null;
-    if (!browserSupportsProxy || !proxyEnabled) {
-        var _iteratorNormalCompletion2 = true;
-        var _didIteratorError2 = false;
-        var _iteratorError2 = undefined;
-
-        try {
-            for (var _iterator2 = tagsList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                var tag = _step2.value;
-
-                lib[tag] = tagFunc(tag);
-
-                var nrt = '_nr' + tag;
-                lib[nrt] = tagNoRenderFunc(tag);
-                lib[nrt]._is_l_L_generator = true;
-                lib[tag]._is_l_node_generator = true;
-            }
-        } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
-        } finally {
-            try {
-                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                    _iterator2.return();
-                }
-            } finally {
-                if (_didIteratorError2) {
-                    throw _iteratorError2;
-                }
-            }
-        }
-    } else {
-        var cache = {};
-        proxy = new Proxy(lib, {
-            get: function get(obj, prop) {
-                if (prop in cache) {
-                    return cache[prop];
-                }
-
-                if (prop in tags) {
-                    var func = tagFunc(prop);
-                    func._is_l_node_generator = true;
-                    cache[prop] = func;
-                    return func;
-                } else if (prop.startsWith('_nr')) {
-                    var name = prop.substring(3),
-                        _func = tagNoRenderFunc(name);
-                    _func._is_l_L_generator = true;
-                    cache[prop] = _func;
-                    return _func;
-                }
-                return obj[prop];
-            }
-        });
-    }
-
-    var valOf = function valOf(val) {
-        if (typeof val === 'function') {
-            return val();
-        }
-        return val;
-    };
-
-    lib.isNodeGenerator = function (o) {
-        return typeof o === 'function' && o._is_l_node_generator;
-    };
-    lib.isLGenerator = function (o) {
-        return typeof o === 'function' && o._is_l_L_generator;
-    };
-    lib.isL = function (o) {
-        return (typeof o === 'undefined' ? 'undefined' : _typeof(o)) === 'object' && o._is_l_L;
-    };
-
-    lib.nodify = function () {
-        for (var _len6 = arguments.length, vals = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-            vals[_key6] = arguments[_key6];
-        }
-
-        vals = vals.flat();
-        for (var _i = 0; _i < vals.length; ++_i) {
-            var _val = vals[_i];
-            if (l.isLGenerator(_val)) {
-                vals[_i] = _val().render();
-            } else if (l.isL(_val)) {
-                vals[_i] = _val.render();
-            } else if (l.isNodeGenerator(_val)) {
-                vals[_i] = _val();
-            } else if (typeof _val === 'function') {
-                vals[_i] = l.eval(_val);
-            } else if (!l.isNode(_val)) {
-                vals[_i] = document.createTextNode(_val);
-            }
-        }
-        return vals;
-    };
-
-    lib.appendChild = function (parent) {
-        for (var _len7 = arguments.length, children = Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
-            children[_key7 - 1] = arguments[_key7];
-        }
-
-        l.nodify(children.flat()).forEach(function (child) {
-            return parent.appendChild(child);
-        });
-        return parent;
-    };
-    lib.appendChildren = lib.appendChild;
-
-    lib.appendBody = function () {
-        for (var _len8 = arguments.length, children = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-            children[_key8] = arguments[_key8];
-        }
-
-        return lib.appendChild.apply(lib, [document.body].concat(children));
-    };
-
-    lib.prependChild = function (parent) {
-        for (var _len9 = arguments.length, children = Array(_len9 > 1 ? _len9 - 1 : 0), _key9 = 1; _key9 < _len9; _key9++) {
-            children[_key9 - 1] = arguments[_key9];
-        }
-
-        l.nodify(children.flat()).forEach(function (child) {
-            return parent.insertAdjacentElement('afterBegin', child);
-        });
-        return parent;
-    };
-    lib.prependChildren = lib.prependChild;
-
-    lib.prependBody = function () {
-        for (var _len10 = arguments.length, children = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
-            children[_key10] = arguments[_key10];
-        }
-
-        return lib.prependChild.apply(lib, [document.body].concat(children));
-    };
-
-    lib.insertChildAfter = function (target) {
-        for (var _len11 = arguments.length, nodes = Array(_len11 > 1 ? _len11 - 1 : 0), _key11 = 1; _key11 < _len11; _key11++) {
-            nodes[_key11 - 1] = arguments[_key11];
-        }
-
-        l.nodify(nodes.flat()).forEach(function (node) {
-            return target.insertAdjacentElement('afterEnd', node);
-        });
-        return target;
-    };
-    lib.insertChildrenAfter = lib.insertChildAfter;
-
-    lib.insertChildBefore = function (target) {
-        for (var _len12 = arguments.length, nodes = Array(_len12 > 1 ? _len12 - 1 : 0), _key12 = 1; _key12 < _len12; _key12++) {
-            nodes[_key12 - 1] = arguments[_key12];
-        }
-
-        l.nodify(nodes.flat()).forEach(function (node) {
-            return target.insertAdjacentElement('beforeBegin', node);
-        });
-        return target;
-    };
-    lib.insertChildrenBefore = lib.insertChildBefore;
-
-    lib.setProp = function (target, name, val) {
-        if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) === 'object') {
-            if (_typeof(target[name]) === 'object') {
-                for (var _key13 in val) {
-                    target[name][_key13] = val[_key13];
-                }
-            } else {
-                target[name] = val;
-            }
-        } else {
-            target[name] = val;
-        }
-        return target;
-    };
-
-    lib.setProps = function (target) {
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-        for (var name in props) {
-            lib.setProp(target, name, props[name]);
-        }
-        return target;
-    };
-    lib.setProperties = lib.setProps;
-
-    lib.setAttr = function (target, name, val) {
-        if (val !== null && val !== '') {
-            target.setAttribute(name, valOf(val));
-        }
-        return target;
-    };
-    lib.setAttribute = lib.setAttr;
-
-    lib.setStyle = function (target, style) {
-        return lib.setProp(target, 'style', style);
-    };
-
-    lib.setAttrs = function (target) {
-        var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-        for (var name in attrs) {
-            lib.setAttr(target, name, attrs[name]);
-        }
-        return target;
-    };
-    lib.setAttributes = lib.setAttrs;
-
-    lib.removeAttr = function (target, attr) {
-        target.removeAttribute(attr);
-        return target;
-    };
-    lib.removeAttribute = lib.removeAttr;
-
-    lib.removeAttrs = function (target) {
-        while (target.attributes.length > 0) {
-            target.removeAttributeNode(target.attributes[0]);
-        }
-        return target;
-    };
-    lib.removeAttributes = lib.removeAttrs;
-
-    lib.addChildren = function (target) {
-        for (var _len13 = arguments.length, children = Array(_len13 > 1 ? _len13 - 1 : 0), _key14 = 1; _key14 < _len13; _key14++) {
-            children[_key14 - 1] = arguments[_key14];
-        }
-
-        lib.appendChild.apply(lib, [target].concat(children));
-        return target;
-    };
-    lib.addChild = lib.addChildren;
-
-    lib.removeChildren = function (target) {
-        while (target.firstChild !== null) {
-            target.firstChild.remove();
-        }
-        return target;
-    };
-    lib.removeChild = lib.removeChildren;
-
-    lib.remove = function (target) {
-        target.remove();
-        return target;
-    };
-
-    lib.removeClass = function (target) {
-        for (var _len14 = arguments.length, classes = Array(_len14 > 1 ? _len14 - 1 : 0), _key15 = 1; _key15 < _len14; _key15++) {
-            classes[_key15 - 1] = arguments[_key15];
-        }
-
-        classes.forEach(function (_class) {
-            return target.classList.remove(_class);
-        });
-        return target;
-    };
-    lib.removeClasses = lib.removeClass;
-
-    lib.addClass = function (target) {
-        for (var _len15 = arguments.length, classes = Array(_len15 > 1 ? _len15 - 1 : 0), _key16 = 1; _key16 < _len15; _key16++) {
-            classes[_key16 - 1] = arguments[_key16];
-        }
-
-        classes.forEach(function (_class, i) {
-            return target.className += (target.className.length === 0 ? '' : ' ') + _class;
-        });
-        return target;
-    };
-    lib.addClasses = lib.addClass;
-
-    lib.addId = function (target) {
-        for (var _len16 = arguments.length, ids = Array(_len16 > 1 ? _len16 - 1 : 0), _key17 = 1; _key17 < _len16; _key17++) {
-            ids[_key17 - 1] = arguments[_key17];
-        }
-
-        ids.forEach(function (id, i) {
-            return target.id += (target.id.length === 0 ? '' : ' ') + id;
-        });
-        return target;
-    };
-    lib.addIds = lib.addId;
-
-    lib.selectByClass = function (className) {
-        return document.getElementsByClassName(className);
-    };
-
-    lib.selectById = function (id) {
-        return document.getElementById(id);
-    };
-
-    lib.selectFirst = function (selector) {
-        return document.querySelector(selector);
-    };
-
-    lib.selectAll = function (selector) {
-        return document.querySelectorAll(selector);
-    };
-
-    lib.isNode = function (o) {
-        return o instanceof Element || o instanceof HTMLDocument;
-    };
-
-    // force everything in config object to be an attribute
-    lib.forceAttrs = function (b) {
-        return forceAttrsEnabled = b;
-    };
-
-    // force everything in the config object to be a prop
-    lib.forceProps = function (b) {
-        return forcePropsEnabled = b;
-    };
-
-    // enable/disable aliasing of config object names
-    lib.disableAliasing = function () {
-        return aliasingEnabled = false;
-    };
-    lib.enableAliasing = function () {
-        return aliasingEnabled = true;
-    };
-
-    // try to use Javascript Proxy if it is supported for l.<tagname>
-    lib.enableProxy = function () {
-        return proxyEnabled = true;
-    };
-    lib.disableProxy = function () {
-        return proxyEnabled = false;
-    };
-
-    // taint an object with all the html functions
-    lib.import = function () {
-        var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : window;
-        var clobber = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-        var _iteratorNormalCompletion3 = true;
-        var _didIteratorError3 = false;
-        var _iteratorError3 = undefined;
-
-        try {
-            for (var _iterator3 = tagsList[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                var _tag = _step3.value;
-
-                if (clobber || o[_tag] === undefined) {
-                    o[_tag] = l[_tag];
-                }
-            }
-        } catch (err) {
-            _didIteratorError3 = true;
-            _iteratorError3 = err;
-        } finally {
-            try {
-                if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                    _iterator3.return();
-                }
-            } finally {
-                if (_didIteratorError3) {
-                    throw _iteratorError3;
-                }
-            }
-        }
-
-        return o;
-    };
-
-    // current issue: l.div('oij', 3) 
-
-    // black magic function that lets you use html tags as function names
-    // without tainting global namespace
-    // anything that would not work as an identifier has been prefixed with an underscore
-    lib.eval = function (func) {
-        var f = tagDefs + 'var ret = (' + func + ')(); return l.isL(ret) ? ret.render() : ret;';
-        return normalize(new Function(f)());
-    };
-
-    return proxy === null ? lib : proxy;
-}();
+/******/ });
+});

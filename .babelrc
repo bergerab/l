@@ -1,0 +1,13 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                useBuiltins: false,
+                "targets": {
+                    "browsers": [ "defaults", "not dead" ],
+                }
+            }
+        ]
+    ]
+}

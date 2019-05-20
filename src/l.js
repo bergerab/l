@@ -8,16 +8,64 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-'strict mode';
+const { HTMLNode, Document } = require('./proxyNode');
+const { tags } = require('./tags');
 
-const l = (function () {
+module.exports = (function () {
+    const l = (...args) => {
+        if (args.length === 0) {
+            return null;
+        }
+        
+        args[0] = normalize(args[0]);
+        if (typeof args[0] === 'string') {
+            return new L(...args).render();
+        } else if (typeof args[0] === 'function') {
+            const first = l.eval(args.shift());
+            if (args.length > 0) {
+                return l.appendChild(first, ...args);
+            } else {
+                return first;
+            }
+        } else {
+            return l.appendChild(...args);
+        }
+    };
+
+    let window = this,
+        document = null,
+        Proxy = Proxy || null,
+        HTMLDocument = null,
+        Element = null,
+        usingProxyDocument = false;
+    
+    function setupWindowProps(wnd) {
+        window = wnd;
+
+        if (window === undefined || window.document === undefined) {
+            document = new Document(); // use fake document if there is none
+            usingProxyDocument = true;
+        } else {
+            document = window.document;
+            usingProxyDocument = false;
+        }
+        if (window !== undefined) {
+            Proxy = window.Proxy;
+            HTMLDocument = window.HTMLDocument;
+            Element = window.Element;
+        }
+    }
+
+    setupWindowProps(window);
+
+    
     // keys in the configuration object that are reserved (won't work as
     // a shortcut to add a prop or attr)
     const RESERVED_KEYS = {children: true, props: true, attrs: true};
 
     // If these keys are in the root of the configuration object, they will
     // always be interpreted as properties and not attributes
-    const FORCED_PROP_KEYS = {innerHTML: true, outerHTML: true, textContent: true, hidden: true, dataset: true, isContentEditable: true};
+    const FORCED_PROP_KEYS = {innerHTML: true, innerText: true, outerHTML: true, textContent: true, hidden: true, dataset: true, isContentEditable: true};
 
     // Attempt to guess what someone means -- careful when you add to this
     // it will trying to use these keys as attributes
@@ -32,7 +80,7 @@ const l = (function () {
         } else if (l.isL(init)) {
             init = init.render();
         } else if (typeof init === 'function') {
-            init = lib.eval(init);
+            init = l.eval(init);
         }
         return init;
     }
@@ -142,84 +190,63 @@ const l = (function () {
 
         render() {
             var tag = document.createElement(this.name);
-            lib.setProps(tag, this.props);
-            lib.setAttrs(tag, this.attrs);
-            lib.addChildren(tag, this.children);
+            l.setProps(tag, this.props);
+            l.setAttrs(tag, this.attrs);
+            l.addChildren(tag, this.children);
             return tag;
         }
     }
-    
-    const lib = (...args) => {
-        if (args.length === 0) {
-            return null;
-        }
-        
-        args[0] = normalize(args[0]);
-        if (typeof args[0] === 'string') {
-            return new L(...args).render();
-        } else if (typeof args[0] === 'function') {
-            const first = lib.eval(args.shift());
-            if (args.length > 0) {
-                return lib.appendChild(first, ...args);
-            } else {
-                return first;
-            }
-        } else {
-            return lib.appendChild(...args);
-        }
-    },
-          tags = {
-              a:1, abbr:1, address:1, area:1, article:1, aside:1, audio:1, b:1, base:1, bdi:1, bdo:1, blockquote:1, 
-              body:1, br:1, button:1, canvas:1, caption:1, cite:1, code:1, col:1, colgroup:1, data:1, datalist:1,
-              dd:1, del:1, details:1, dfn:1, dialog:1, div:1, dl:1, dt:1, em:1, embed:1, fieldset:1, figure:1, footer:1,
-              form:1, h1:1, h2:1, h3:1, h4:1, h5:1, h6:1, head:1, header:1, hgroup:1, hr:1, html:1, i:1, iframe:1, img:1,
-              input:1, label:1, legend:1, li:1, ul:1, link:1, main:1, map:1, mark:1, menu:1, menuitem:1,
-              meta:1, meter:1, nav:1, object:1, ol:1, optgroup:1, option:1, output:1, p:1, param:1, pre:1, progress:1,
-              q:1, s:1, samp:1, script:1, section:1, select:1, small:1, source:1, span:1,
-              strong:1, style:1, sub:1, summary:1, sup:1, table:1, tbody:1, td:1, template:1, textarea:1, tfoot:1, th:1,
-              thead:1, time:1, title:1, tr:1, track:1, u:1, var:1, video:1, wbr:1,
-          };
 
-    const browserSupportsProxy = typeof window.Proxy === 'function';
-    
+    const supportsProxy = () => {
+        return typeof Proxy === 'function';
+    };
+
+    /*
+     * Because programs like webpack only run in 'strict mode',
+     * there is no way to use the "deprecated" with statement.
+     * it is not officially deprecated, its just that the 
+     * community doesn't like it so much that it has been disabled in
+     * strict mode.
+     *
+     * I'll continue using this hack instead. My integration tests show
+     * that the difference in speed is not great (usually < 1 ms)
+     */
     let tagDefs = 'var ';
-    const tagDefAliases = {
-        var: '_var',
-            };
-    
-    const tagsList = Object.keys(tags);
-    
-    for (let i=0; i<tagsList.length; ++i) {
-        let key = tagsList[i],
-            val = '_nr' + tagsList[i];
+    const tagDefAliases = { var: '_var' };
+
+    for (const tag of tags.values()) {
+        let key = tag,
+            val = '_nr' + tag;
+
         if (key in tagDefAliases) {
             key = tagDefAliases[key];
         }
-        tagDefs += key + '=' + 'l.' + val + (i === tagsList.length - 1 ? ';' : ',');
+        tagDefs += key + '=' + 'l.' + val + ',';
     }
+    tagDefs = tagDefs.substring(0, tagDefs.length - 1) + ';';
 
     const tagNoRenderFunc = tag => (...args) => new L(tag, ...args),    
           tagFunc = tag => (...args) => new L(tag, ...args).render();
     
     let proxy = null;
-    if (!browserSupportsProxy || !proxyEnabled) {
-        for (const tag of tagsList) {
-            lib[tag] = tagFunc(tag);
+    if (!supportsProxy() || !proxyEnabled) {
+        for (const tag of tags.values()) {
+            l[tag] = tagFunc(tag);
 
             const nrt = '_nr' + tag;
-            lib[nrt] = tagNoRenderFunc(tag);
-            lib[nrt]._is_l_L_generator = true;
-            lib[tag]._is_l_node_generator = true;
+            l[nrt] = tagNoRenderFunc(tag);
+            l[nrt]._is_l_L_generator = true;
+            l[tag]._is_l_node_generator = true;
         }
     } else {
         const cache = {};
-        proxy = new Proxy(lib, {
+        proxy = new Proxy(l, {
             get: function(obj, prop) {
                 if (prop in cache) {
                     return cache[prop];
                 }
                 
-                if (prop in tags) {
+                if (tags.has(prop)) {
                     const func = tagFunc(prop);
                     func._is_l_node_generator = true;
                     cache[prop] = func;
@@ -243,11 +270,11 @@ const l = (function () {
         return val;
     };
 
-    lib.isNodeGenerator = o => typeof o === 'function' && o._is_l_node_generator;
-    lib.isLGenerator = o => typeof o === 'function' && o._is_l_L_generator;    
-    lib.isL = o => typeof o === 'object' && o._is_l_L;
+    l.isNodeGenerator = o => typeof o === 'function' && o._is_l_node_generator;
+    l.isLGenerator = o => typeof o === 'function' && o._is_l_L_generator;    
+    l.isL = o => typeof o === 'object' && o instanceof L;
 
-    lib.nodify = (...vals) => {
+    l.nodify = (...vals) => {
         vals = vals.flat();
         for (let i=0; i<vals.length; ++i) {
             const val = vals[i];
@@ -266,35 +293,35 @@ const l = (function () {
         return vals;
     };
     
-    lib.appendChild = (parent, ...children) => {
+    l.appendChild = (parent, ...children) => {
         l.nodify(children.flat()).forEach(child => parent.appendChild(child));
         return parent;
     };
-    lib.appendChildren = lib.appendChild;
+    l.appendChildren = l.appendChild;
     
-    lib.appendBody = (...children) => lib.appendChild(document.body, ...children);
+    l.appendBody = (...children) => l.appendChild(document.body, ...children);
     
-    lib.prependChild = (parent, ...children) => {
+    l.prependChild = (parent, ...children) => {
         l.nodify(children.flat()).forEach(child => parent.insertAdjacentElement('afterBegin', child));
         return parent;
     };
-    lib.prependChildren = lib.prependChild;
+    l.prependChildren = l.prependChild;
     
-    lib.prependBody = (...children) => lib.prependChild(document.body, ...children);
+    l.prependBody = (...children) => l.prependChild(document.body, ...children);
     
-    lib.insertChildAfter = (target, ...nodes) => {
+    l.insertChildAfter = (target, ...nodes) => {
         l.nodify(nodes.flat()).forEach(node => target.insertAdjacentElement('afterEnd', node));
         return target;
     };
-    lib.insertChildrenAfter = lib.insertChildAfter;
+    l.insertChildrenAfter = l.insertChildAfter;
     
-    lib.insertChildBefore = (target, ...nodes) => {
+    l.insertChildBefore = (target, ...nodes) => {
         l.nodify(nodes.flat()).forEach(node => target.insertAdjacentElement('beforeBegin', node));
         return target;
     };
-    lib.insertChildrenBefore = lib.insertChildBefore;
+    l.insertChildrenBefore = l.insertChildBefore;
 
-    lib.setProp = (target, name, val) => {
+    l.setProp = (target, name, val) => {
         if (typeof val === 'object') {
             if (typeof target[name] === 'object') {
                 for (const key in val) {
@@ -309,120 +336,136 @@ const l = (function () {
         return target;
     };
     
-    lib.setProps = (target, props={}) => {
+    l.setProps = (target, props={}) => {
         for (const name in props) {
-            lib.setProp(target, name, props[name]);
+            l.setProp(target, name, props[name]);
         }
         return target;
     };
-    lib.setProperties = lib.setProps;
+    l.setProperties = l.setProps;
 
-    lib.setAttr = (target, name, val) => {
+    l.setAttr = (target, name, val) => {
         if (val !== null && val !== '') {
             target.setAttribute(name, valOf(val));
         }
         return target;
     };
-    lib.setAttribute = lib.setAttr;
+    l.setAttribute = l.setAttr;
 
-    lib.setStyle = (target, style) => {
-        return lib.setProp(target, 'style', style);
+    l.setStyle = (target, style) => {
+        return l.setProp(target, 'style', style);
     };
     
-    lib.setAttrs = (target, attrs={}) => {
+    l.setAttrs = (target, attrs={}) => {
         for (const name in attrs) {
-            lib.setAttr(target, name, attrs[name]);
+            l.setAttr(target, name, attrs[name]);
         }
         return target;
     };
-    lib.setAttributes = lib.setAttrs;
+    l.setAttributes = l.setAttrs;
 
-    lib.removeAttr = (target, attr) => {
+    l.addChildren = (target, ...children) => {
+        l.appendChild(target, ...children);
+        return target;
+    };
+    l.addChild = l.addChildren;
+
+    l.str = (...args) => {
+        const ret = l(...args);
+        if (l.isNode(ret)) {
+            return ret.outerHTML;
+        }
+        return '';
+    };
+
+    // start of things that can be removed
+    l.removeAttr = (target, attr) => {
         target.removeAttribute(attr);
         return target;
     };
-    lib.removeAttribute = lib.removeAttr;
+    l.removeAttribute = l.removeAttr;
 
-    lib.removeAttrs = target => {
+    l.removeAttrs = target => {
         while (target.attributes.length > 0) {
             target.removeAttributeNode(target.attributes[0]);
         }
         return target;
     };
-    lib.removeAttributes = lib.removeAttrs;
+    l.removeAttributes = l.removeAttrs;
     
-    lib.addChildren = (target, ...children) => {
-        lib.appendChild(target, ...children);
-        return target;
-    };
-    lib.addChild = lib.addChildren;
-
-    lib.removeChildren = target => {
+    l.removeChildren = target => {
         while (target.firstChild !== null) {
             target.firstChild.remove();
         }
         return target;
     };
-    lib.removeChild = lib.removeChildren;
+    l.removeChild = l.removeChildren;
 
-    lib.remove = target => {
+    l.remove = target => {
         target.remove();
         return target;
     };
 
-    lib.removeClass = (target, ...classes) => {
+    l.removeClass = (target, ...classes) => {
         classes.forEach(_class => target.classList.remove(_class));
         return target;
     };
-    lib.removeClasses = lib.removeClass;
+    l.removeClasses = l.removeClass;
 
-    lib.addClass = (target, ...classes) => {
+    l.addClass = (target, ...classes) => {
         classes.forEach((_class, i) => target.className += (target.className.length === 0 ? '' : ' ') + _class);
         return target;
     };
-    lib.addClasses = lib.addClass;
+    l.addClasses = l.addClass;
 
-    lib.addId = (target, ...ids) => {
+    l.addId = (target, ...ids) => {
         ids.forEach((id, i) => target.id += (target.id.length === 0 ? '' : ' ') + id);
         return target;
     };
-    lib.addIds = lib.addId;
+    l.addIds = l.addId;
 
-    lib.selectByClass = className => {
+    l.selectByClass = className => {
         return document.getElementsByClassName(className);
     };
 
-    lib.selectById = id => {
+    l.selectById = id => {
         return document.getElementById(id);
     };
 
-    lib.selectFirst = selector => {
+    l.selectFirst = selector => {
         return document.querySelector(selector);
     };
 
-    lib.selectAll = selector => {
+    l.selectAll = selector => {
         return document.querySelectorAll(selector);
     };
+    // end of things that can be removed
 
-    lib.isNode = o => o instanceof Element || o instanceof HTMLDocument;
+    l.isNode = o => {
+        if (usingProxyDocument) {
+            return o != null && o instanceof HTMLNode;
+        } else {
+            return (Element != null && HTMLDocument != null) && (o instanceof Element || o instanceof HTMLDocument);
+        }
+    };
 
     // force everything in config object to be an attribute
-    lib.forceAttrs = b => forceAttrsEnabled = b;
+    l.forceAttrs = b => forceAttrsEnabled = b;
 
     // force everything in the config object to be a prop
-    lib.forceProps = b => forcePropsEnabled = b;
+    l.forceProps = b => forcePropsEnabled = b;
 
     // enable/disable aliasing of config object names
-    lib.disableAliasing = () => aliasingEnabled = false;
-    lib.enableAliasing = () => aliasingEnabled = true;
+    l.disableAliasing = () => aliasingEnabled = false;
+    l.enableAliasing = () => aliasingEnabled = true;
 
     // try to use Javascript Proxy if it is supported for l.<tagname>
-    lib.enableProxy = () => proxyEnabled = true;
-    lib.disableProxy = () => proxyEnabled = false;
+    l.enableProxy = () => proxyEnabled = true;
+    l.disableProxy = () => proxyEnabled = false;
 
     // taint an object with all the html functions
-    lib.import = (o=window, clobber=false) => {
-        for (const tag of tagsList) {
+    l.import = (o=window, clobber=false) => {
+        for (const tag of tags.values()) {
             if (clobber || o[tag] === undefined) {
                 o[tag] = l[tag];
             }
@@ -431,15 +474,22 @@ const l = (function () {
         return o;
     };
 
+    l.injectWindow = mock => {
+        window = mock;
+        document = window.document;
+        setupWindowProps(mock);
+    };
+
     // current issue: l.div('oij', 3) 
 
     // black magic function that lets you use html tags as function names
     // without tainting global namespace
     // anything that would not work as an identifier has been prefixed with an underscore
-    lib.eval = func => {
+    l.eval = func => {
         const f = tagDefs + 'var ret = (' + func + ')(); return l.isL(ret) ? ret.render() : ret;';
-        return normalize(new Function(f)());
+        return normalize(new Function('l', f)(l));
     };
 
-    return proxy === null ? lib : proxy;
+    return proxy === null ? l : proxy;
 }());
+
