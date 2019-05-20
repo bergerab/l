@@ -1,15 +1,15 @@
-<img src="logo.png" width="100px"></img>
-# _l_: An HTML Generation Library for Javascript
+<img src="img/logo.png" width="100px"></img>
+# <img src="img/l.png" width="24px"></img>: An HTML Generation Library for Javascript
 
-_l_ is a Javascript library that makes generating HTML easier.
+<img src="img/l.png" width="18px"></img> is a Javascript library that makes generating HTML easier.
 
 When you want to create HTML dynamically you have to use the DOM API. 
 The DOM API is verbose, and can require multiple statements to generate a single node to your liking. 
-_l_ gives a declarative style to DOM creation and allows for describing HTML structures in a single statement.
+<img src="img/l.png" width="18px"></img> gives a declarative style to DOM creation and allows for describing HTML structures in a single statement.
 
 Try it out online [here](http://idiocode.com/projects/l/index.html#try)!
 
-_l_:
+<img src="img/l.png" width="18px"></img>:
 ```javascript
 l(() => div(
     h1('Example'),
@@ -44,8 +44,10 @@ b ahblahbhalb halb halb halbh abl hablhab
 a bhl ablhablahblahblahb lahbalbhalbha
 balhblabh
 
-## Tutorial
-The interface to _l_ is the `l` object that is defined when you import _l_.
+## Usage
+Once you've downloaded the library, include it in your HTML page, or import via es6 imports.
+
+One new variable will be in your namespace called `l`. The following sections will go over the specifics of what you can do with this object.
 
 ## Generating Elements
 There are multiple ways to generate HTML through the `l` object. 
@@ -105,7 +107,7 @@ l.span({ html: 'You can set the html like this too' })
 // <span>You can set the html like this too</span>
 ```
 
-In the object that we passed, _l_ will try to guess if the value should be set as an attribute, or a property on the node.
+In the object that we passed, <img src="img/l.png" width="18px"></img>  will try to guess if the value should be set as an attribute, or a property on the node.
 If you want to force a value to be a property or attribute explicitly you can use the reserved key `attrs` for attributes
 and `props` for properties:
 
@@ -117,7 +119,7 @@ l.textarea({ props: { value: My value' }})
 // <textarea></textarea>
 ```
 
-Notice how _l_ inferred that `value` was an attribute, but when told to use it as a property it will be assigned to the node 
+Notice how <img src="img/l.png" width="18px"></img>  inferred that `value` was an attribute, but when told to use it as a property it will be assigned to the node 
 as a property. This results in the HTML not containing the potentially long `value` attribute, but it is still shown in the HTML. 
 
 
@@ -156,9 +158,9 @@ l.span(1, 2, 3, l.div(4, 'five', l.div(l.div('six'))))
 // <span>123<div>4five<div><div>six</div></div></div></span>
 ```
 
-### _l_ Function
+### <img src="img/l.png" width="18px"></img>  Function
 You know how we have been saying `l.div` and `l.span`? That isn't what the example code looks like is it? To get the pretty
-code you see in the examples, you have to use _l_ functions. An _l_ function is a shortcut so that you 
+code you see in the examples, you have to use <img src="img/l.png" width="18px"></img>  functions. An <img src="img/l.png" width="18px"></img>  function is a shortcut so that you 
 can skip typing `l.` all the time. Everything works the same as before. All the arguments are the same, its just easier to type.
 The main advantage is that you can feel like you're typing actual HTML instead of using a library.
 
@@ -173,11 +175,11 @@ l(() => div(span('Feels more like writing HTML), br, span('Pretty cool')))
 l.div(() => span('You use it anywhere'), () => l.br, () => l.span('Yeah'))
 ```
 
-There is a small performance overhead that comes with using _l_ functions. If you are using this to create a Javascript interface
+There is a small performance overhead that comes with using <img src="img/l.png" width="18px"></img>  functions. If you are using this to create a Javascript interface
 for a rocketship that would benefit from being 0.001 milliseconds faster, look elsewhere. But, everyone else in the world can enjoy the
 cleaner interface.
 
-A good trait of _l_ functions is that they allow for omitting the `l.`, without tainting the outer or global scope:
+A good trait of <img src="img/l.png" width="18px"></img>  functions is that they allow for omitting the `l.`, without tainting the outer or global scope:
 
 ```javascript
 var a = "Can't touch this";
@@ -186,13 +188,13 @@ l(() => a('What are you talking about', { href: '#' }));
 console.log(a === "Can't touch this");
 ```
 
-See how inside of the _l_ function, `a` changed its value from being `"Can't touch this"` to being a function that creates an anchor tag? Even better,
-the `a` defined in the outer scope is untouched. You can think of any tag name as a reserved keyword inside of an _l_ function.
-If you need to close a variable over an _l_ function, you should make sure it isn't the name of an HTML tag, as it will not
-be visible inside of the _l_ function.
+See how inside of the <img src="img/l.png" width="18px"></img>  function, `a` changed its value from being `"Can't touch this"` to being a function that creates an anchor tag? Even better,
+the `a` defined in the outer scope is untouched. You can think of any tag name as a reserved keyword inside of an <img src="img/l.png" width="18px"></img>  function.
+If you need to close a variable over an <img src="img/l.png" width="18px"></img>  function, you should make sure it isn't the name of an HTML tag, as it will not
+be visible inside of the <img src="img/l.png" width="18px"></img>  function.
 
 ## Appending to Existing Nodes
-_l_ supports a way of appending children to existing DOM nodes. When you use `l` as a function, as we have done "Generating Elements",
+<img src="img/l.png" width="18px"></img>  supports a way of appending children to existing DOM nodes. When you use `l` as a function, as we have done "Generating Elements",
 you can pass `l` an existing DOM node, and it will append any nodes that are given after it to that node.
 
 ```javascript
@@ -216,7 +218,7 @@ l.div(1, () => div(span, br, () => div, article, 'oiwjef'), 'three', l.hr, l.br,
 ```
 
 That's a complicated example, but it shows how all the arguments we learned about can be nested together
-and used interchangably. _l_ makes sense of whatever mess you give it. So try to give it your own mess
+and used interchangably. <img src="img/l.png" width="18px"></img>  makes sense of whatever mess you give it. So try to give it your own mess
 and see what it gives you back :)
 
 ## Related Libraries
@@ -233,8 +235,8 @@ container.appendChild(node);
 document.body.appendChild(container);
 ```
 
-Others have noticed how inefficient this is too and have created libraries to make using it faster for the programmer. Here are some of the libraries that came before _l_ and inspired my work:
-- [crel](https://github.com/KoryNunn/crel) - Similar in function to _l_ with interface differences.
+Others have noticed how inefficient this is too and have created libraries to make using it faster for the programmer. Here are some of the libraries that came before <img src="img/l.png" width="18px"></img>  and inspired my work:
+- [crel](https://github.com/KoryNunn/crel) - Similar in function to <img src="img/l.png" width="18px"></img> with interface differences.
 - [laconic](https://github.com/joestelmach/laconic) - Similar to crel (crel says this was its inspiration).
 - [RE:DOM](https://redom.js.org/) - Influenced by web components.
 

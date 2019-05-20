@@ -1,0 +1,31 @@
+{
+    "name": "l-html",
+    "version": "1.0.0",
+    "description": "An HTML Generation Library for Javascript",
+    "main": "l.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "babel --presets es2015 src/l.js -o dist/l.js && uglifyjs dist/l.js > dist/l.min.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/adambertrandberger/l.git"
+    },
+    "keywords": [
+        "html",
+        "generation",
+        "dsl"
+    ],
+    "author": "Adam Bertrand Berger",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/adambertrandberger/l/issues"
+    },
+    "homepage": "https://github.com/adambertrandberger/l#readme",
+    "devDependencies": {
+        "babel-cli": "^6.26.0",
+        "babel-core": "^6.26.3",
+        "babel-preset-es2015": "^6.24.1",
+        "uglifyjs": "^2.4.11"
+    }
+}
