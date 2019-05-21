@@ -1,8 +1,8 @@
 <div align="center">
     <img src="img/logo.png" width="100px"></img>
     <br>
-    <img src="https://img.shields.io/badge/dependencies-none-blue.svg"></img>
-    <img src="https://img.shields.io/badge/supported%20runtimes-browser%20%7C%20nodejs%20-%23afafaf.svg"></img>
+    <a href="#"><img alt="no dependencies" src="https://img.shields.io/badge/dependencies-none-blue.svg"></img></a>
+    <a href="https://travis-ci.org/adambertrandberger/l"><img alt="build status" src="https://travis-ci.org/adambertrandberger/l.svg?branch=master"></img></a>
     <h1>for Javascript</h1>
 </div>
 

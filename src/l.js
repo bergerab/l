@@ -263,13 +263,6 @@ module.exports = (function () {
         });
     }
 
-    const valOf = val => {
-        if (typeof val === 'function') {
-            return val();
-        }
-        return val;
-    };
-
     l.isNodeGenerator = o => typeof o === 'function' && o._is_l_node_generator;
     l.isLGenerator = o => typeof o === 'function' && o._is_l_L_generator;    
     l.isL = o => typeof o === 'object' && o instanceof L;
@@ -346,7 +339,7 @@ module.exports = (function () {
 
     l.setAttr = (target, name, val) => {
         if (val !== null && val !== '') {
-            target.setAttribute(name, valOf(val));
+            target.setAttribute(name, val);
         }
         return target;
     };

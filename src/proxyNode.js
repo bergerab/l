@@ -85,7 +85,7 @@ function HTMLNode(dom, nodeName, type=1) {
         for (let i=0; i<attrsList.length; ++i) {
             const attrName = attrsList[i],
                   attrVal = this.node.attributes[attrName];
-            attrs += `${attrName}="${attrVal}"`;
+            attrs += `${attrName.toLowerCase()}="${attrVal}"`;
             if (i !== attrsList.length - 1) {
                 attrs += ' ';
             }
