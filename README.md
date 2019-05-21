@@ -230,7 +230,7 @@ There is a small performance overhead that comes with using <img src="img/l.png"
 for a rocketship that would benefit from being 0.1 milliseconds faster, you can skip using <img src="img/l.png" alt="l" height="14px"></img> functions. But, everyone else in the world can enjoy the
 cleaner interface.
 
-A nice trait of <img src="img/l.png" alt="l" height="14px"></img> functions is that they don't tainting the outer or global scope:
+A nice trait of <img src="img/l.png" alt="l" height="14px"></img> functions is that they don't clobber variables in the outer or global scope:
 
 ```javascript
 var a = "Can't touch this";
@@ -317,6 +317,32 @@ class Profile {
 This way you can generate an HTML page for any person's profile. No Virtual DOM needed!
 
 Make a game in Javascript, make a webserver, make visualizations, do anything you could do in normal Javascript and HTML, but enjoy it more.
+
+## A Note on the Performance of <img src="img/l.png" alt="l" height="14px"></img> Functions
+Everytime you use an <img src="img/l.png" alt="l" height="14px"></img> function, Javascript's `eval(...)` function is called. The function you supply
+is actually converted to a string, then, among other things, a bunch of `var` declarations for each tag name are prepended to that string and fed into a `eval(...)` equivalent.
+Popular opinion is to think that this is massively inefficient. From my tests, this is not the case. In fact, sometimes it is _more_ efficient. Doing it this way allows the library to use intermediate objects
+for HTML elements, and then perform all DOM node creation at once. When interfacing with the DOM, there are optimizations for calls which are made in succession. This optimization is not possible without 
+<img src="img/l.png" alt="l" height="14px"></img> functions because tag generators like `l.div()` and `l.span()` are strict and create a DOM node immediately. Tag generator functions must do this because
+there is no way to say "whenever a tag generator completes, and the stack is empty, convert the result to a DOM node". The optimization can still be done manually; however,
+requiring a manual step from the programmers though. It would look like this: `l.dom(l.div, l.span, l.div(l.div()));`. But then, the whole library would have to be used this way.
+but I'm not willing to make users have to worry about when the intermedate HTML element objects are turned into DOM nodes. At that point, I turn to my opinion that the programmers time
+is not worth that small of an efficiency gain.
+
+Not convinced that an `eval(...)` could be faster than normal function calls? Run the performance tests yourself:
+
+```
+git clone https://github.com/adambertrandberger/l
+npm install
+npm run test-performance
+```
+
+Another question I forsee is "why not use the `with` statement instead of building up your own variable declarations in the string that is eval'd?". Well, the Javascript community has effectively killed
+the `with` statement. Javascript running in `"strict mode"` doesn't pass the parsing step if it finds a `with` statement. Many tools are hard coded to only use `"strict mode"` for
+their build processes. This means if I wanted to use "modern tooling", like webpack and babel, I couldn't use the `with` statement.
+
+Before asking why I would consider using the `with` statement in the first place, make sure you've read this entire section, and ran the performance tests for yourself. After you've completed that, I welcome
+criticism.
 
 ## Related Libraries
 The idea of generating HTML in programming languages is old. It has been (almost famously) re-invented in lisps many times. [spinneret](https://github.com/ruricolist/spinneret), for example, is a library for generating HTML5. 

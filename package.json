@@ -4,7 +4,9 @@
     "description": "An HTML Generation Library for Javascript",
     "main": "l.js",
     "scripts": {
-        "test": "mocha --compiler js:babel-core ./tests",
+        "test": "npm run test-behavior",
+        "test-behavior": "mocha --compiler js:babel-core ./test/behavior/",
+        "test-performance": "mocha ./test/performance/",
         "build": "webpack --mode=production",
         "watch": "onchange 'src/**/*.js' -- npm run build",
         "dev-watch": "onchange 'src/**/*.js' -- npm run dev-build",

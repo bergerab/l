@@ -1,13 +1,6 @@
 const { expect } = require('chai');
-var l = require('../dist/l.js');
-
-function expectStr(le) {
-    return expect(le.outerHTML);
-}
-
-function assertStr(le, str) {
-    expectStr(le).to.equal(str);
-}
+const { expectStr, assertStr } = require('../setup');
+var l = require('../../dist/l.js');
 
 describe('HTML Element creation with no properties, attributes, or children', () => {
     it('should produce an element if a function with a name of a valid HTML tag name is called on `l`.', () => {
@@ -93,33 +86,3 @@ describe('HTML Element creation with properties, and attributes', () => {
         expect(node.onchange).to.equal(meatball);
     });
 });
-
-
-/* should be moved to a performance testing file */
-/*
-  const {  performance } = require('perf_hooks');
-
-  function assertStrAndRuntime(normal, lFunc, str, msDifference=1) {
-  let now = performance.now();
-  expectStr(normal()).to.equal(str);
-  const dt1 = performance.now() - now;
-
-  now = performance.now();
-  expectStr(lFunc()).to.equal(str);
-  const dt2 = performance.now() - now;
-
-  console.log('\tNormal took', dt1, '`l` Function took', dt2);
-
-  expect(dt2 - dt1).to.be.lessThan(msDifference);
-  }
-
-  describe('`l` Functions and normal function calls should be the same', () => {
-  it('Producing a `div` should have the same output and `l` function should be within 1 millisecond in runtime', () => {
-  assertStrAndRuntime(() => l.div(), () => l(() => div), '<div></div>');
-  });
-
-  it('Producing nested `div`s should have the same output and `l` function should be within 1 millisecond in runtime', () => {
-  assertStrAndRuntime(() => l.div(l.div(l.div(l.div(l.div())))), () => l(() => div(div(div(div(div()))))), '<div><div><div><div><div></div></div></div></div></div>');
-  });
-  });
-*/
