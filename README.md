@@ -216,13 +216,8 @@ can skip typing `l.` all the time. Everything works the same as before. All the 
 The main advantage is that you can feel like you're typing actual HTML instead of using a library.
 
 ```javascript
-// without l function
-l.div(l.span('A little more typing'), l.br, l.span('But still good'))
-
-// with l function
 l(() => div(span('Feels more like writing HTML'), br, span('Pretty cool')))
 
-// with l function
 l.div(() => span('You use it anywhere'), () => l.br, () => l.span('Yeah'))
 ```
 
@@ -245,7 +240,7 @@ If you need to close a variable over an <img src="img/l.png" alt="l" height="14p
 be visible inside of the <img src="img/l.png" alt="l" height="14px"></img>  function.
 
 ## Appending to Existing Nodes
-<img src="img/l.png" alt="l" height="14px"></img>  supports a way of appending children to existing DOM nodes. When you use `l` as a function, as we have done "Generating Elements",
+<img src="img/l.png" alt="l" height="14px"></img>  supports a way of appending children to existing DOM nodes. When you use `l` as a function, as we have done <a href="#generating-elements"><i>Generating Elements</i></a>,
 you can pass `l` an existing DOM node, and it will append any nodes that are given after it to that node.
 
 ```javascript
@@ -318,16 +313,17 @@ This way you can generate an HTML page for any person's profile. No Virtual DOM 
 
 Make a game in Javascript, make a webserver, make visualizations, do anything you could do in normal Javascript and HTML, but enjoy it more.
 
-## A Note on the Performance of <img src="img/l.png" alt="l" height="14px"></img> Functions
+## A Note on the Performance of <img src="img/l.png" alt="l" height="18px"></img> Functions
 Everytime you use an <img src="img/l.png" alt="l" height="14px"></img> function, Javascript's `eval(...)` function is called. The function you supply
-is actually converted to a string, then, among other things, a bunch of `var` declarations for each tag name are prepended to that string and fed into a `eval(...)` equivalent.
-Popular opinion is to think that this is massively inefficient. From my tests, this is not the case. In fact, sometimes it is _more_ efficient. Doing it this way allows the library to use intermediate objects
+is actually converted to a string, then, among other things, a bunch of `var` declarations for each tag name are prepended to that string and fed into an `eval(...)` equivalent.
+
+Popular opinion is to think that this is massively inefficient. From my tests, this is not the case. In fact, sometimes it is _more_ efficient. Using `eval` allows the library to use intermediate objects
 for HTML elements, and then perform all DOM node creation at once. When interfacing with the DOM, there are optimizations for calls which are made in succession. This optimization is not possible without 
 <img src="img/l.png" alt="l" height="14px"></img> functions because tag generators like `l.div()` and `l.span()` are strict and create a DOM node immediately. Tag generator functions must do this because
 there is no way to say "whenever a tag generator completes, and the stack is empty, convert the result to a DOM node". The optimization can still be done manually; however,
 requiring a manual step from the programmers though. It would look like this: `l.dom(l.div, l.span, l.div(l.div()));`. But then, the whole library would have to be used this way.
 but I'm not willing to make users have to worry about when the intermedate HTML element objects are turned into DOM nodes. At that point, I turn to my opinion that the programmers time
-is not worth that small of an efficiency gain.
+is not worth that small of an efficiency gain. If you need to be that fast, you may want to consider using c.
 
 Not convinced that an `eval(...)` could be faster than normal function calls? Run the performance tests yourself:
 
