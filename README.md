@@ -320,7 +320,10 @@ is actually converted to a string, then, among other things, a bunch of `var` de
 Popular opinion is to think that this is massively inefficient. From my tests, this is not the case. In fact, sometimes it is _more_ efficient. Using `eval` allows the library to use intermediate objects
 for HTML elements, and then perform all DOM node creation at once. When interfacing with the DOM, there are optimizations for calls which are made in succession. This optimization is not possible without 
 <img src="img/l.png" alt="l" height="14px"></img> functions because tag generators like `l.div()` and `l.span()` are strict and create a DOM node immediately. Tag generator functions must do this because
-there is no way to say "whenever a tag generator completes, and the stack is empty, convert the result to a DOM node". The optimization can still be done manually; however,
+there is no way to say "whenever a tag generator completes, and the stack is empty, convert the result to a DOM node". Well... there is a way, but it includes using `Function.prototype.caller` which is widely
+understood to be on the docket for removal from most Javascript implementations who added it.
+
+The optimization can still be done manually; however,
 requiring a manual step from the programmers though. It would look like this: `l.dom(l.div, l.span, l.div(l.div()));`. But then, the whole library would have to be used this way.
 but I'm not willing to make users have to worry about when the intermedate HTML element objects are turned into DOM nodes. At that point, I turn to my opinion that the programmers time
 is not worth that small of an efficiency gain. If you need to be that fast, you may want to consider using c.
@@ -342,7 +345,7 @@ criticism.
 
 ## Related Libraries
 The idea of generating HTML in programming languages is old. It has been (almost famously) re-invented in lisps many times. [spinneret](https://github.com/ruricolist/spinneret), for example, is a library for generating HTML5. 
-Programming languages like prolog, python, and c have done it too. However, these programming languages don't run directly in the browser like Javascript does. 
+Programming languages like [prolog](http://www.swi-prolog.org/pldoc/man?section=htmlwrite), python, and c have done it too. However, these programming languages don't run directly in the browser like Javascript does. 
 Those libraries are created for web servers or static page generation. No offense to server-side programming, especially because <img src="img/l.png" alt="l" height="14px"></img> supports that. But, having access to the DOM allows 
 nodes to be created dynamically and for making interactive HTML. Seeing as Javascript can run in the browser like this, and be used for a webserver it is a natural fit for such a library.
 
@@ -358,7 +361,8 @@ document.body.appendChild(container)
 ```
 
 Others have noticed how messy this is too and have created libraries to make using it faster for the programmer. Here are some of the libraries that came before <img src="img/l.png" alt="l" height="14px"></img>  and inspired my work:
-- [jaml](http://edspencer.github.io/jaml/) - Has the same interface as <img src="img/l.png" alt="l" height="14px"></img> functions, but only generates HTML strings and lacks other functional features. Still a great, yet under-appreciated library.
+- [jaml](http://edspencer.github.io/jaml/) - Has the same interface as <img src="img/l.png" alt="l" height="14px"></img> functions, but only generates HTML strings.
+- [http/html_write](http://www.swi-prolog.org/pldoc/man?section=htmlwrite) - A prolog library for generating HTML. Identical interface as JAML and <img src="img/l.png" alt="l" height="14px"></img> functions.
 - [crel](https://github.com/KoryNunn/crel) - Similar in function to <img src="img/l.png" alt="l" height="14px"></img> with interface differences.
 - [laconic](https://github.com/joestelmach/laconic) - Similar to crel (crel says this was its inspiration).
 - [RE:DOM](https://redom.js.org/) - Influenced by web components.
@@ -372,3 +376,12 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## TODO:
+- add a way to print a pretty html string
+- add way of passing parameters to l functions
+- rename Element to Node and Node to NodeProperties (and make a new Element class and TextNode class)
+- make website
+- add try-out-online page
+- create example apps
+- func.caller optimization if in dom mode

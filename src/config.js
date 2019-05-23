@@ -8,8 +8,41 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const { l } = require('./iElement');
-require('./polyfills');
+/*
+ * Keys in the configuration object that are reserved (won't work as
+ * a shortcut to add a prop or attr)
+ */
+const RESERVED_KEYS = new Set([
+    'children',
+    'props',
+    'attrs',
+]);
 
-module.exports = l;
+/*
+ * If these keys are in the root of the configuration object, they will
+ * always be interpreted as properties and not attributes
+ */
+const FORCED_PROP_KEYS = new Set([
+    'innerHTML',
+    'innerText',
+    'outerHTML',
+    'textContent',
+    'hidden',
+    'dataset',
+    'isContentEditable',
+]);
 
+/*
+ * Attempt to guess what someone means -- careful when you add to this
+ * it will trying to use these keys as attributes
+ */
+const ALIAS_KEYS = {
+    html: 'innerHTML',
+    text: 'textContent'
+};
+
+Object.assign(module.exports, {
+    RESERVED_KEYS,
+    FORCED_PROP_KEYS,
+    ALIAS_KEYS
+});

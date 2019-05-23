@@ -8,8 +8,36 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const { l } = require('./iElement');
-require('./polyfills');
+const { TAGS } = require('./tags');
 
-module.exports = l;
+/*
+ * o is map from (symbol -> symbol)
+ *
+ */
+const toDeclarations = (o) => {
+    return `var ${Object.entries(o).map(([x, y]) => `${x}=${y}`).join(',')};`;
+};
 
+const createDeclarations = (aliases={ var: '_var' }) => {
+    const context = {};
+    for (let tagName of TAGS.values()) {
+        let iElementGeneratorName = '_' + tagName;
+
+        if (tagName in aliases) {
+            tagName = aliases[tagName];
+        }
+        context[tagName] = 'l.' + iElementGeneratorName;
+    }
+    return toDeclarations(context);
+};
+
+const declarations = createDeclarations();
+
+const _eval = (func, l) => {
+    func = `${declarations};return (${func})();`;
+    return new Function('l', func)(l);
+};
+
+module.exports = {
+    _eval,
+};

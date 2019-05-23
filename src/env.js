@@ -8,8 +8,46 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const { l } = require('./iElement');
-require('./polyfills');
+const { Document } = require('./element');
 
-module.exports = l;
+let window = global,
+    document = null,
+    Proxy = Proxy || null,
+    HTMLDocument = null,
+    Element = null,
+    usingProxyDocument = false;
 
+const initializeWindow = newWindow => {
+    window = newWindow;
+
+    // if there is no window, use a new fake DOM
+    if (window === undefined || window.document === undefined) {
+        document = new Document();
+        usingProxyDocument = true;
+    } else {
+        document = window.document;
+        usingProxyDocument = false;
+    }
+    
+    if (window !== undefined) {
+        Proxy = window.Proxy;
+        HTMLDocument = window.HTMLDocument;
+        Element = window.Element;
+    }
+};
+
+const supportsProxy = () => typeof Proxy === 'function';
+const isUsingProxyDocument = () => usingProxyDocument;
+
+initializeWindow(window);
+
+Object.assign(module.exports, {
+    initializeWindow,
+    window,
+    document,
+    Proxy,
+    HTMLDocument,
+    Element,
+    isUsingProxyDocument,
+    supportsProxy,
+});

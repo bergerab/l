@@ -8,8 +8,17 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const { l } = require('./iElement');
-require('./polyfills');
-
-module.exports = l;
-
+if (Array.prototype.flat === undefined) {
+    Array.prototype.flat = function() {
+        let flattened = [];
+        for (let i=0; i<this.length; ++i) {
+            const item = this[i];
+            if (Array.isArray(item)) {
+                flattened = flattened.concat(item);
+            } else {
+                flattened.push(item);
+            }
+        }
+        return flattened;
+    };
+}
