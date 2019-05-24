@@ -6,6 +6,28 @@
     </head>
     <body>
         <script src="../dist/l.js"></script>
-        
+        <script>
+
+         class Profile {
+             constructor(name, age, phoneNumber) {
+                 this.name = name;
+                 this.age = age;
+                 this.phoneNumber = phoneNumber;
+             }
+             
+             editAge(e) {
+                 alert('Call me at ' + this.phoneNumber);
+             }
+             
+             render(parent) {
+                 return l(parent, l.with({ this:this }, () => div(
+                     h1(`Welcome, ${this.name}!`),
+                     ul(li(`Age: ${this.age}`), 
+                        li(`Phone Number: ${this.phoneNumber}`, { onclick: this.editAge.bind(this) })
+                     ),
+                 )));
+             }
+         }
+        </script>
     </body>
 </html>

@@ -1,8 +1,8 @@
 {
     "name": "l-html",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "description": "An HTML Generation Library for Javascript",
-    "main": "l.js",
+    "main": "dist/l.js",
     "scripts": {
         "test": "npm run test-behavior",
         "test-behavior": "mocha --compiler js:babel-core ./test/behavior/",
@@ -19,7 +19,7 @@
     "keywords": [
         "html",
         "generation",
-        "dsl"
+        "l"
     ],
     "author": "Adam Bertrand Berger",
     "license": "MIT",

@@ -5,13 +5,13 @@ var l = require('../../dist/l.js');
 const { expect } = require('chai');
 
 function assertStrAndRuntime(normal, lFunc, str, msDifference=1) {
-    let now = performance.now();
-    expectStr(normal()).to.equal(str);
-    const dt1 = performance.now() - now;
-
-    now = performance.now();
+    var now = performance.now();
     expectStr(lFunc()).to.equal(str);
     const dt2 = performance.now() - now;
+    
+    now = performance.now();
+    expectStr(normal()).to.equal(str);
+    const dt1 = performance.now() - now;
 
     console.log('\tNormal took', dt1, '`l` Function took', dt2);
 

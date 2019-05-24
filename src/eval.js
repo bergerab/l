@@ -38,6 +38,30 @@ const _eval = (func, l) => {
     return new Function('l', func)(l);
 };
 
+const _with = (data, func, l) => {
+    func = `return (${func})();`;
+    const args = ['l', '__data'];
+    let hasThis = false;
+    for (const key in data) {
+        if (key !== 'this') { // make it so that we can use "this" by not passing it as an argument, just bind it to the function
+            args.push(key);
+            func = `${key}=__data.${key};\n` + func;
+        } else {
+            hasThis = true;
+        }
+    }
+    func = declarations + func; // ordering matters here. we are doing the declarations last, so that people can overwrite the element generators
+    console.log(func);
+    args.push(func);
+
+    if (hasThis) {
+        return new Function(...args).bind(data['this'])(l, data);
+    } else {
+        return new Function(...args)(l, data);
+    }
+};
+
 module.exports = {
     _eval,
+    _with,
 };

@@ -239,6 +239,38 @@ the `a` defined in the outer scope is untouched. You can think of any tag name a
 If you need to close a variable over an <img src="img/l.png" alt="l" height="14px"></img>  function, you should make sure it isn't the name of an HTML tag, as it will not
 be visible inside of the <img src="img/l.png" alt="l" height="14px"></img>  function.
 
+#### Note: <img src="img/l.png" alt="l" height="14px"></img> Functions are not Closures
+One bad thing about <img src="img/l.png" alt="l" height="14px"></img> functions is that they don't keep the same properties that exist in Javascript functions. They are not closures and so
+the following code will _not_ work:
+
+```
+// Does NOT work:
+function myFunc() {
+    const thing = 12;
+    console.log(() => div(thing));
+}
+
+myFunc(); // throws "ReferenceError: thing is not defined"
+```
+
+This isn't the worst thing, because it means that no local variables (variables defined in functions) will interfer with variables in the 
+<img src="img/l.png" alt="l" height="14px"></img> functions.
+
+### <img src="img/l.png" alt="l" height="14px"></img> Functions _can_ access global variables
+
+
+## Passing Arguments to <img src="img/l.png" alt="l" height="14px"></img> Functions
+Because <img src="img/l.png" alt="l" height="14px"></img> aren't closures, we need some way of passing variables into them if we ever want to render based on specific data.
+
+We can do this with `l.with`. Give `l.with` an object and all that object's fields will be available inside of the <img src="img/l.png" alt="l" height="14px"></img> function.
+
+```
+l.with({ person }, () => div(person.age));
+```
+
+Notice how you don't need to give the  <img src="img/l.png" alt="l" height="14px"></img> function any additional parameters. The object you give `l.with` automagically includes them in the
+scope.
+
 ## Appending to Existing Nodes
 <img src="img/l.png" alt="l" height="14px"></img>  supports a way of appending children to existing DOM nodes. When you use `l` as a function, as we have done <a href="#generating-elements"><i>Generating Elements</i></a>,
 you can pass `l` an existing DOM node, and it will append any nodes that are given after it to that node.
@@ -291,20 +323,22 @@ Try mixing in Javascript with <img src="img/l.png" alt="l" height="14px"></img> 
 ```javascript
 class Profile {
     constructor(name, age, phoneNumber) {
-        ...
+        this.name = name;
+        this.age = age;
+        this.phoneNumber = phoneNumber;
     }
-    
+             
     editAge(e) {
-        ...
+        alert('Call me at ' + this.phoneNumber);
     }
-    
+             
     render(parent) {
-        return l(parent, () => div(
-            h1(`Welcome, ${this.name}!`),
-            ul(li(`Age: ${this.age}`), 
-               li(`Phone Number: ${this.phoneNumber}`, { onclick: this.editAge.bind(this) })
-           ),
-        ));
+        return l(parent, l.with(this, () => div(
+            h1(`Welcome, ${name}!`),
+            ul(li(`Age: ${age}`), 
+                li(`Phone Number: ${phoneNumber}`, { onclick: editAge })
+            ),
+        )));
     }
 }
 ```

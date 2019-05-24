@@ -11,7 +11,7 @@
 const { RESERVED_KEYS, FORCED_PROP_KEYS, ALIAS_KEYS } = require('./config'),
       { setProps, setAttrs, appendChildren, isElement } = require('./domHelpers'),
       { document, supportsProxy } = require('./env'),
-      { _eval } = require('./eval'),
+      { _eval, _with } = require('./eval'),
       { TAGS } = require('./tags');
 
 let forceAttrsEnabled = false,
@@ -276,6 +276,8 @@ l.pstr = (...args) => {
 
 l.nodify = nodify;
 l.normalize = normalize;
+
+l.with = (data, func) =>  normalize(_with(data, func, l));
 
 // taint an object with all the html functions
 l.import = (o=window, clobber=false) => {
