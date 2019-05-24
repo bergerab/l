@@ -9,7 +9,7 @@
  */
 
 const { RESERVED_KEYS, FORCED_PROP_KEYS, ALIAS_KEYS } = require('./config'),
-      { setProps, setAttrs, appendChildren, isElement } = require('./domHelpers'),
+      { setProps, setAttrs, appendChildren, isElement, setChildren } = require('./domHelpers'),
       { document, supportsProxy } = require('./env'),
       { _eval, _with } = require('./eval'),
       { TAGS } = require('./tags');
@@ -306,7 +306,11 @@ l.perf = (...args) => {
     const ret = l(...args);
     console.log(performance.now() - start);
     return ret;
-}
+};
+
+l.set = (parent, ...args) => {
+    setChildren(parent, nodify(args));
+};
 
 l.isIElement = isIElement;
 

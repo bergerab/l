@@ -15,7 +15,13 @@ const appendChildren = (parent, ...children) => {
     return parent;
 };
 
-const appendBody = (...children) => appendChild(document.body, ...children);
+const appendBody = (...children) => appendChildren(document.body, ...children);
+
+const setChildren = (parent, ...children) => {
+    removeChildren(parent);
+    appendChildren(parent, ...children);
+    return parent;
+};
 
 const prependChild = (parent, ...children) => {
     children.flat().forEach(child => parent.insertAdjacentElement('afterBegin', child));
@@ -82,7 +88,7 @@ const setAttrs = (target, attrs={}) => {
 };
 
 const addChildren = (target, ...children) => {
-    appendChild(target, ...children);
+    appendChildren(target, ...children);
     return target;
 };
 
@@ -174,4 +180,5 @@ Object.assign(module.exports, {
     selectById,
     selectFirst,
     selectAll,
+    setChildren,
 });

@@ -227,7 +227,7 @@ the `a` defined in the outer scope is untouched. You can think of any tag name a
 If you need to close a variable over an <img src="img/l.png" alt="l" height="14px"></img>  function, you should make sure it isn't the name of an HTML tag, as it will not
 be visible inside of the <img src="img/l.png" alt="l" height="14px"></img>  function.
 
-#### <img src="img/l.png" alt="l" height="14px"></img> Functions _can_ access global variables
+#### <img src="img/l.png" alt="l" height="14px"></img> Functions and Variable Scopes
 You might be wondering exactly which variables <img src="img/l.png" alt="l" height="14px"></img> functions are capable of accessing. Due to implementation problems, <img src="img/l.png" alt="l" height="14px"></img> functions 
 aren't able to keep the same properties that exist in Javascript functions. They do not capture local variables as Javascript's closures do. This means
 the following code will _not_ work:
@@ -445,15 +445,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - Add try-out-online page
 - Create example apps
 - why does doing `l.div` vs `l.div()` have such a large performance impact
-
-# l.span()
-0.025
-500
-
-# l._span()
-0.37999998312443495
-500
-
-# span()
-3.8800000329501927
-500
+- figure out why Proxy isn't being used in the browser for the `l` object

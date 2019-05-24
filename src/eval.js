@@ -21,12 +21,12 @@ const toDeclarations = (o) => {
 const createDeclarations = (aliases={ var: '_var' }) => {
     const context = {};
     for (let tagName of TAGS.values()) {
-        let iElementGeneratorName = '_' + tagName;
+        let elementGeneratorName = tagName;
 
         if (tagName in aliases) {
             tagName = aliases[tagName];
         }
-        context[tagName] = 'l.' + iElementGeneratorName;
+        context[tagName] = 'l.' + elementGeneratorName;
     }
     return toDeclarations(context);
 };

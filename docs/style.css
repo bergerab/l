@@ -1,0 +1,37 @@
+body {
+    margin: 0 20%;
+}
+
+img.preview {
+    float: left;
+    height: 175px;
+    margin-right: 20px;
+}
+
+section.block {
+    display: inline-block;
+}
+
+img.drawing {
+    height: 200px;
+}
+
+a, u {
+    /* Don't underline links */
+    text-decoration: none;
+}
+
+nav > a {
+    margin-right: 10px;
+}
+
+div.summaries {
+    display: grid;
+}
+
+/* For medium screens */
+@media screen and (max-width: 1200px) {
+    body {
+        margin: 20px;
+    }
+}
