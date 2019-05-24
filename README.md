@@ -51,18 +51,6 @@ Just download `dist/l.js` and place it next to the HTML you're importing it from
 <script src="l.js"></script>
 ```
 
-Using ES6 modules? You can add `l-html` as a dependency by running:
-
-```sh
-npm install l-html
-```
-
-Then import using:
-
-```javascript
-import l from 'l-html'
-```
-
 ### For Node.js
 <img src="img/l.png" alt="l" height="14px"></img> works in Node.js too! Install with `npm install l-html`, then import using `require`:
 
@@ -221,8 +209,8 @@ l(() => div(span('Feels more like writing HTML'), br, span('Pretty cool')))
 l.div(() => span('You use it anywhere'), () => l.br, () => l.span('Yeah'))
 ```
 
-There is a small performance overhead that comes with using <img src="img/l.png" alt="l" height="14px"></img>  functions. If you are using this to create a Javascript interface
-for a rocketship that would benefit from being 0.1 milliseconds faster, you can skip using <img src="img/l.png" alt="l" height="14px"></img> functions. But, everyone else in the world can enjoy the
+There is a performance overhead that comes with using <img src="img/l.png" alt="l" height="14px"></img> functions. If you are using this to create a 
+mission-critical page that would benefit from being a couple of milliseconds faster, you can skip using <img src="img/l.png" alt="l" height="14px"></img> functions, or even look into using `l.import`. But, everyone else will be able enjoy the
 cleaner interface.
 
 A nice trait of <img src="img/l.png" alt="l" height="14px"></img> functions is that they don't clobber variables in the outer or global scope:
@@ -349,33 +337,49 @@ Make a game in Javascript, make a webserver, make visualizations, do anything yo
 
 ## A Note on the Performance of <img src="img/l.png" alt="l" height="18px"></img> Functions
 Everytime you use an <img src="img/l.png" alt="l" height="14px"></img> function, Javascript's `eval(...)` function is called. The function you supply
-is actually converted to a string, then, among other things, a bunch of `var` declarations for each tag name are prepended to that string and fed into an `eval(...)` equivalent.
+is actually converted to a string, then, among other things, a bunch of `var` declarations for each tag name are prepended to that string and fed into an `eval(...)`.
 
-Popular opinion is to think that this is massively inefficient. From my tests, this is not the case. In fact, sometimes it is _more_ efficient. Using `eval` allows the library to use intermediate objects
-for HTML elements, and then perform all DOM node creation at once. When interfacing with the DOM, there are optimizations for calls which are made in succession. This optimization is not possible without 
-<img src="img/l.png" alt="l" height="14px"></img> functions because tag generators like `l.div()` and `l.span()` are strict and create a DOM node immediately. Tag generator functions must do this because
+Popular opinion is to think that this is massively inefficient. From my tests, it is a bit inefficient, but still very usable even in production environments. Using `eval` allows the library to be even more flexible 
+becuase it can use intermediate objects for HTML elements. Down the road additional helper functions and optimizations could be written that takes advantage of this. For example, when interfacing with the DOM, there are optimizations 
+for calls which are made in succession intermediate objects allow us to be lazy about DOM node generation and allow us to do some optimizations around that. Element generator functions couldn't do this because
 there is no way to say "whenever a tag generator completes, and the stack is empty, convert the result to a DOM node". Well... there is a way, but it includes using `Function.prototype.caller` which is widely
-understood to be on the docket for removal from most Javascript implementations who added it.
+understood to be on the docket for removal from most Javascript implementations.
 
-The optimization can still be done manually; however,
+An optimization like this can still be done manually; however,
 requiring a manual step from the programmers though. It would look like this: `l.dom(l.div, l.span, l.div(l.div()));`. But then, the whole library would have to be used this way.
 but I'm not willing to make users have to worry about when the intermedate HTML element objects are turned into DOM nodes. At that point, I turn to my opinion that the programmers time
-is not worth that small of an efficiency gain. If you need to be that fast, you may want to consider using c.
+is not worth that small of an efficiency gain. This is why the option to use an `eval` based approach may be a good thing rather than a bad thing. There is no doubt about the weakened performance
+at the moment though. I did a test on my macbook, and I was able to create ~500 DOM nodes (a `div` with 500 `span` children) in 0.025 milliseconds using element generators (`l.div()` and `l.span()`).
+I tried the same experiment using <img src="img/l.png" alt="l" height="14px"></img> functions and was able to make 500 DOM nodes in 3.88 milliseconds. These tests were done in Google Chrome, not on Node.js.
+I assume the running times will be different on Node.js based on how a fake DOM is used in that environment. 
 
-Not convinced that an `eval(...)` could be faster than normal function calls? Run the performance tests yourself:
+Keep in mind this is a lot of DOM nodes. 500 nodes is enough for making most web pages. When this number becomes unusable is when you are using the library for a game that requires 60FPS updates and has > 10,000 DOM nodes (since every frame must take less than 16.66ms).
+Perhaps a large n-body particle simulation would greatly benefit from skipping <img src="img/l.png" alt="l" height="14px"></img> functions all together and just going with element generators.
+
+The conclusion I take away from these results is to use <img src="img/l.png" alt="l" height="14px"></img> functions whenever performance doesn't matter. Rendering a webpage, and even frequent re-rendering of a 
+webpage is a good use for <img src="img/l.png" alt="l" height="14px"></img> functions because it will save programmer time. For tasks that are extremely time sensitive (such as rendering animation frames) or for
+extremely large webpages (>10,000 DOM nodes), use element generators, or `l.import`.
+
+## But I want high performance, and <img src="img/l.png" alt="l" height="14px"></img> functions!
+We can do that. But you are going to have to sacrifice for a little good ol' fashioned namespace pollution:
 
 ```
-git clone https://github.com/adambertrandberger/l
-npm install
-npm run test-performance
+l.import();
+
+div(span(span()), 'it works!')
 ```
 
-Another question I forsee is "why not use the `with` statement instead of building up your own variable declarations in the string that is eval'd?". Well, the Javascript community has effectively killed
-the `with` statement. Javascript running in `"strict mode"` doesn't pass the parsing step if it finds a `with` statement. Many tools are hard coded to only use `"strict mode"` for
-their build processes. This means if I wanted to use "modern tooling", like webpack and babel, I couldn't use the `with` statement.
+There is `l.import` for this need. The function takes an object to import the element generators into (defaults to `window`), and a boolean which indicates whether to clobber existing variables or not (defaults to `false`, as in "don't clobber").
 
-Before asking why I would consider using the `with` statement in the first place, make sure you've read this entire section, and ran the performance tests for yourself. After you've completed that, I welcome
-criticism.
+This isn't a horrible choice if you really like the <img src="img/l.png" alt="l" height="14px"></img> function syntax, but want the performance. Although, it has potential to cause some nasty variable overriding issues. I figured I would keep it in the library for those who don't care about namespace pollution :).
+
+## On the use of `eval` instead of `with`
+
+A question I forsee from a small number of people is "why not use the `with` statement instead of building up your own variable declarations in the string that is eval'd?". Well, the Javascript community has effectively killed
+the `with` statement. Javascript running in `strict mode` doesn't pass the parsing step if it finds a `with` statement. Many tools are hard coded to only use `strict mode` for
+their build processes. This means if I wanted to use the latest transpilers and bundlers, like babel and webpack, I couldn't use the `with` statement.
+
+I'm sure before the first question is asked most people would say "why were you even considering using the `with` statement?!". The dynamic nature of <img src="img/l.png" alt="l" height="14px"></img> functions required me to do some namespace hacking.
 
 ## Related Libraries
 The idea of generating HTML in programming languages is old. It has been (almost famously) re-invented in lisps many times. [spinneret](https://github.com/ruricolist/spinneret), for example, is a library for generating HTML5. 
@@ -395,11 +399,11 @@ document.body.appendChild(container)
 ```
 
 Others have noticed how messy this is too and have created libraries to make using it faster for the programmer. Here are some of the libraries that came before <img src="img/l.png" alt="l" height="14px"></img>  and inspired my work:
-- [jaml](http://edspencer.github.io/jaml/) - Has the same interface as <img src="img/l.png" alt="l" height="14px"></img> functions, but only generates HTML strings.
+- [jaml](http://edspencer.github.io/jaml/) - Has the same interface as <img src="img/l.png" alt="l" height="14px"></img> functions, but only generates HTML strings. It seems like it was inspired from MVC style HTML templates like that of Ruby on Rails or Django.
 - [http/html_write](http://www.swi-prolog.org/pldoc/man?section=htmlwrite) - A prolog library for generating HTML. Identical interface as JAML and <img src="img/l.png" alt="l" height="14px"></img> functions.
-- [crel](https://github.com/KoryNunn/crel) - Similar in function to <img src="img/l.png" alt="l" height="14px"></img> with interface differences.
+- [crel](https://github.com/KoryNunn/crel) - More lightweight than <img src="img/l.png" alt="l" height="14px"></img> with some interface differences (the constructor handles attributes/properties differently). Doesn't have an <img src="img/l.png" alt="l" height="14px"></img> function equivalent.
 - [laconic](https://github.com/joestelmach/laconic) - Similar to crel (crel says this was its inspiration).
-- [RE:DOM](https://redom.js.org/) - Influenced by web components.
+- [RE:DOM](https://redom.js.org/) - Has much in common with <img src="img/l.png" alt="l" height="14px"></img>, but doesn't have a <img src="img/l.png" alt="l" height="14px"></img> function equivalent, and focuses more on providing features for web components and updating the DOM.
 
 ## License
 
@@ -412,10 +416,21 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## TODO:
-- add a way to print a pretty html string
-- add way of passing parameters to l functions
-- rename Element to Node and Node to NodeProperties (and make a new Element class and TextNode class)
-- make website
-- add try-out-online page
-- create example apps
-- func.caller optimization if in dom mode
+- Add a way to print a pretty html string
+- Rename Element to Node and Node to NodeProperties (and make a new Element class and TextNode class)
+- Make website
+- Add try-out-online page
+- Create example apps
+- why does doing `l.div` vs `l.div()` have such a large performance impact
+
+# l.span()
+0.025
+500
+
+# l._span()
+0.37999998312443495
+500
+
+# span()
+3.8800000329501927
+500

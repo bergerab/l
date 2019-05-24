@@ -277,7 +277,18 @@ l.pstr = (...args) => {
 l.nodify = nodify;
 l.normalize = normalize;
 
-l.with = (data, func) =>  normalize(_with(data, func, l));
+l.with = (data, ...args) => {
+    if (args.length === 1 && typeof args[0] === 'function') {
+        return normalize(_with(data, args[0], l));
+    }
+    for (let i=0; i<args.length; ++i) {
+        const arg = args[i];
+        if (typeof arg === 'function') {
+            args[i] = normalize(_with(data, arg, l));
+        }
+    }
+    return l(...args);
+};
 
 // taint an object with all the html functions
 l.import = (o=window, clobber=false) => {
@@ -288,6 +299,14 @@ l.import = (o=window, clobber=false) => {
     }
     return o;
 };
+
+// browser only
+l.perf = (...args) => {
+    const start = performance.now();
+    const ret = l(...args);
+    console.log(performance.now() - start);
+    return ret;
+}
 
 l.isIElement = isIElement;
 

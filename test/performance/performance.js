@@ -1,6 +1,6 @@
 /* should be moved to a performance testing file */
 const { expectStr, assertStr } = require('../setup');
-const {  performance } = require('perf_hooks');
+const { performance } = require('perf_hooks');
 var l = require('../../dist/l.js');
 const { expect } = require('chai');
 
@@ -42,6 +42,12 @@ describe('`l` Functions and normal function calls should be the same', () => {
             
             '<div><div><div><div><div></div></div></div></div></div>'
         );
+    });
+
+    it('Producing nested `div`s should have the same output and `l` function should be within 1 millisecond in runtime', () => {
+        assertStrAndRuntime(() =>
+                            l.div(span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span(),span()),
+                            () => l(() => div(div(div(div(div()))))), '<div><div><div><div><div></div></div></div></div></div>');
     });
 });
 

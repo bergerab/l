@@ -51,7 +51,6 @@ const _with = (data, func, l) => {
         }
     }
     func = declarations + func; // ordering matters here. we are doing the declarations last, so that people can overwrite the element generators
-    console.log(func);
     args.push(func);
 
     if (hasThis) {
