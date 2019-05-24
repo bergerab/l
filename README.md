@@ -1,9 +1,9 @@
 <div align="center">
-    <img src="img/logo.png" width="100px"></img>
-    <br>
-    <a href="#"><img alt="no dependencies" src="https://img.shields.io/badge/dependencies-none-blue.svg"></img></a>
-    <a href="https://travis-ci.org/adambertrandberger/l"><img alt="build status" src="https://travis-ci.org/adambertrandberger/l.svg?branch=master"></img></a>
-    <h1>for Javascript</h1>
+<img src="img/logo.png" width="100px"></img>
+<br>
+<a href="#"><img alt="no dependencies" src="https://img.shields.io/badge/dependencies-none-blue.svg"></img></a>
+<a href="https://travis-ci.org/adambertrandberger/l"><img alt="build status" src="https://travis-ci.org/adambertrandberger/l.svg?branch=master"></img></a>
+<h1>for Javascript</h1>
 </div>
 
 Whether creating DOM nodes for your client-side app, or generating HTML for a Node.js webserver, <img src="img/l.png" alt="l" height="14px"></img> makes it easy.
@@ -16,30 +16,30 @@ Try it out online [here](http://idiocode.com/projects/l/try.html)!
 <img src="img/l.png" alt="l" height="14px"></img>:
 ```javascript
 l(() => div(
-    h1('Example'),
-    div(p('First'), hr, p('Second'), span(span(span('Nesting is easy.')))),
-    section(header(h1('HTML 5 is supported too!')),
-        div('Properties can be set', { style: { color: 'red' }}),
-        div('Attributes can be set too!', { class: 'wow' }))
-    )
+h1('Example'),
+div(p('First'), hr, p('Second'), span(span(span('Nesting is easy.')))),
+section(header(h1('HTML 5 is supported too!')),
+div('Properties can be set', { style: { color: 'red' }}),
+div('Attributes can be set too!', { class: 'wow' }))
+)
 );
 ```
 
 HTML:
 ```html
 <div>
-    <h1>Example</h1>
-    <div>
-        <p>First</p>
-        <hr>
-        <p>Second</p>
-        <span><span><span>Nesting is easy.</span></span></span>
-    </div>
-    <section>
-        <header><h1>HTML 5 is supported too!</h1></header>
-        <div style="color: red;">Properties can be set</div>
-        <div class="wow">Attributes can be set too!</div>
-    </section>
+<h1>Example</h1>
+<div>
+<p>First</p>
+<hr>
+<p>Second</p>
+<span><span><span>Nesting is easy.</span></span></span>
+</div>
+<section>
+<header><h1>HTML 5 is supported too!</h1></header>
+<div style="color: red;">Properties can be set</div>
+<div class="wow">Attributes can be set too!</div>
+</section>
 </div>
 ```
 
@@ -227,37 +227,60 @@ the `a` defined in the outer scope is untouched. You can think of any tag name a
 If you need to close a variable over an <img src="img/l.png" alt="l" height="14px"></img>  function, you should make sure it isn't the name of an HTML tag, as it will not
 be visible inside of the <img src="img/l.png" alt="l" height="14px"></img>  function.
 
-#### Note: <img src="img/l.png" alt="l" height="14px"></img> Functions are not Closures
-One bad thing about <img src="img/l.png" alt="l" height="14px"></img> functions is that they don't keep the same properties that exist in Javascript functions. They are not closures and so
+#### <img src="img/l.png" alt="l" height="14px"></img> Functions _can_ access global variables
+You might be wondering exactly which variables <img src="img/l.png" alt="l" height="14px"></img> functions are capable of accessing. Due to implementation problems, <img src="img/l.png" alt="l" height="14px"></img> functions 
+aren't able to keep the same properties that exist in Javascript functions. They do not capture local variables as Javascript's closures do. This means
 the following code will _not_ work:
 
 ```
 // Does NOT work:
 function myFunc() {
-    const thing = 12;
-    console.log(() => div(thing));
+const thing = 12;
+console.log(() => div(thing));
 }
 
 myFunc(); // throws "ReferenceError: thing is not defined"
 ```
 
-This isn't the worst thing, because it means that no local variables (variables defined in functions) will interfer with variables in the 
-<img src="img/l.png" alt="l" height="14px"></img> functions.
+To look on the bright-side, this is good because it means that no local variables (variables defined in functions) will get clobbered with names of the element generators in the 
+<img src="img/l.png" alt="l" height="14px"></img> functions. But it would be nice to access local variables from within an <img src="img/l.png" alt="l" height="14px"></img> function.
+In the next section we will take a look at `l.with`, which is a way to pass arguments to <img src="img/l.png" alt="l" height="14px"></img> functions.
 
-### <img src="img/l.png" alt="l" height="14px"></img> Functions _can_ access global variables
-
-
-## Passing Arguments to <img src="img/l.png" alt="l" height="14px"></img> Functions
-Because <img src="img/l.png" alt="l" height="14px"></img> aren't closures, we need some way of passing variables into them if we ever want to render based on specific data.
-
-We can do this with `l.with`. Give `l.with` an object and all that object's fields will be available inside of the <img src="img/l.png" alt="l" height="14px"></img> function.
+While they can't access local variables, they _can_ access all global variables:
 
 ```
-l.with({ person }, () => div(person.age));
+// DOES work
+const thing = 12;
+function myFunc() {
+console.log(() => div(thing));
+}
+
+myFunc(); // <div>12</div>
+```
+
+But, if we want <img src="img/l.png" alt="l" height="14px"></img> functions to be able to render different HTML based off different objects, we need a way of passing
+information to the <img src="img/l.png" alt="l" height="14px"></img> functions. In the next section we will show the solution to this: `l.with`.
+
+## Passing Arguments to <img src="img/l.png" alt="l" height="14px"></img> Functions
+Because <img src="img/l.png" alt="l" height="14px"></img> aren't closures, we need some way of passing variables into <img src="img/l.png" alt="l" height="14px"></img> function if we ever want to render HTML based on some input data.
+
+`l.with` lets this happen. `l.with` is just like calling `l` as a function (`l(...)`), except it takes a required object as its first argument.
+
+All of the fields in that object will be available inside of the <img src="img/l.png" alt="l" height="14px"></img> function. Take a look:
+
+```
+const person = { age: 23, name: 'Dave' },
+    animal = { type: 'birdy', talk: () => 'tweet' };
+l.with({ person, animal }, () => div('You are: ', person.age, ' years old.', span(animal.talk()))); // <div>You are: 23 years old<span>tweet</span></div>
 ```
 
 Notice how you don't need to give the  <img src="img/l.png" alt="l" height="14px"></img> function any additional parameters. The object you give `l.with` automagically includes them in the
-scope.
+scope. If you only needed the "person" and didn't want to have to type "person" all the time you can just pass in the "person" directly too:
+
+```
+const person = { age: 23, name: 'Dave' };
+l.with(person, () => div('You are: ', age, ' years old.')); // <div>You are: 23 years old</div>
+```
 
 ## Appending to Existing Nodes
 <img src="img/l.png" alt="l" height="14px"></img>  supports a way of appending children to existing DOM nodes. When you use `l` as a function, as we have done <a href="#generating-elements"><i>Generating Elements</i></a>,
@@ -310,24 +333,24 @@ Try mixing in Javascript with <img src="img/l.png" alt="l" height="14px"></img> 
 
 ```javascript
 class Profile {
-    constructor(name, age, phoneNumber) {
-        this.name = name;
-        this.age = age;
-        this.phoneNumber = phoneNumber;
-    }
-             
-    editAge(e) {
-        alert('Call me at ' + this.phoneNumber);
-    }
-             
-    render(parent) {
-        return l(parent, l.with(this, () => div(
-            h1(`Welcome, ${name}!`),
-            ul(li(`Age: ${age}`), 
-                li(`Phone Number: ${phoneNumber}`, { onclick: editAge })
-            ),
-        )));
-    }
+constructor(name, age, phoneNumber) {
+this.name = name;
+this.age = age;
+this.phoneNumber = phoneNumber;
+}
+
+editAge(e) {
+alert('Call me at ' + this.phoneNumber);
+}
+
+render(parent) {
+return l(parent, l.with(this, () => div(
+h1(`Welcome, ${name}!`),
+ul(li(`Age: ${age}`), 
+li(`Phone Number: ${phoneNumber}`, { onclick: editAge })
+),
+)));
+}
 }
 ```
 
