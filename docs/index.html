@@ -9,7 +9,9 @@
     <body>
         <script>
          document.body.onhashchange = function () {
-             renderFromHash();
+             site.goToHash(window.location.hash);
+             site.render();
+             window.location.hash = '';
          };
 
          function renderSiteMap(cursor, depth, parent) {
@@ -27,174 +29,307 @@
 
              return parent;
          }
+         
+         class Site {
+             constructor(pages) {
+                 this.currentPage = pages.length > 0 ? pages[0] : null;
+                 this.pages = {};
+                 if (pages.length > 0) {
+                     this.addToPages(pages[0]);
+                 }
+                 if (pages.length > 1) {
+                     for (let i=1; i<pages.length; ++i) {
+                         const a = pages[i - 1],
+                               b = pages[i];
 
-         function renderFromHash() {
-             var hash = window.location.hash.substring(1);
-             if (pages[hash]) {
-                 pages[hash].render();
-             } else {
-                 pages.home.render();
-                 window.location.hash = '';
+                         this.pages[b.url] = b;
+                         this.addToPages(b);
+                         
+                         a.nextPage = b;
+                         b.prevPage = a;
+                     }
+                 }
+             }
+
+             addToPages(page) {
+                 this.pages[page.url] = page;
+                 for (const child of page.children) {
+                     this.pages[child.url] = child;
+                     this.addToPages(child);
+                 }
+             }
+
+             goToHash(hash) {
+                 hash = hash.substring(1);
+                 if (this.pages[hash]) {
+                     this.currentPage = this.pages[hash];
+                     this.render();
+
+                 }
+             }
+
+             goDirection(direction) {
+                 if (this.currentPage[direction + 'Page']) {
+                     return this.currentPage[direction + 'Page'];
+                 }
+                 return null;
+             }
+
+             render() {
+                 if (this.currentPage) {
+                     document.title = 'l - ' + this.name;
+                     const prev = this.getPrev(),
+                           next = this.getNext(),
+                           up = this.getUp();
+
+                     // TODO: does passsing "with" work with other arguments?
+                     l.set(document.body, l.with({ currentPage: this.currentPage, prev, next, up }, function () {
+                         return div(
+                             prev == null ? '' : a(prev.name, { float: 'left', href: '#'+prev.url, style: { position: 'absolute' }}),
+                             next == null ? '' : a(next.name, { float: 'right', href: '#'+next.url, style: { position: 'absolute', right: 0 }}),
+                             up == null ? '' : a(up.name, { float: 'right', href: '#'+up.url, style: { textAlign: 'center', width: '100%', display: 'block' }}),
+                             currentPage.url === 'home' ? '' : div({ align: 'center' },
+                                                                   img({ src: 'img/logo.png', width: 100 }),
+                                                                   br,
+                                                                   h2(currentPage.name),
+                             ),
+                             currentPage.html
+                         )
+                     }));
+                 }
+             }
+
+             getDown() {
+                 return this.goDirection('down');
+             }
+
+             getUp() {
+                 return this.goDirection('up');
+             }
+
+             getNext() {
+                 if (this.currentPage.downPage) {
+                     return this.currentPage.downPage;
+                 } else if (this.currentPage.nextPage) {
+                     return this.currentPage.nextPage;
+                 } else if (this.currentPage.upPage && this.currentPage.upPage.nextPage) {
+                     return this.currentPage.upPage.nextPage;
+                 }
+                 return null;
+             }
+
+             getPrev() {
+                 if (this.currentPage.prevPage) {
+                     return this.currentPage.prevPage.getLastPage();
+                 } else if (this.currentPage.upPage) {
+                     return this.currentPage.upPage;
+                 }
+                 return null;
              }
          }
-         /*
-         function site(pages) {
-             
+
+         class Page {
+             constructor(name, url, html, children) {
+                 this.name = name;
+                 this.url = url;
+                 this.html = html;
+
+                 // to navigate on the same depth
+                 this.prevPage = null;
+                 this.nextPage = null;
+
+                 // to navigate down to children
+                 this.downPage = null;
+                 this.upPage = null;
+                 
+                 this.children = children || [];
+
+                 if (this.children.length > 0) {
+                     this.downPage = this.children[0];
+                     this.children[0].upPage = this;
+
+                     let i = 1;
+                     for (; i<this.children.length; ++i) {
+                         const a = this.children[i - 1],
+                               b = this.children[i];
+
+                         a.nextPage = b;
+                         b.prevPage = a;
+                         
+                         b.upPage = this;
+                     }
+                 }
+                 
+                 return this;
+             }
+
+             getLastPage() {
+                 if (this.children.length > 0) {
+                     return this.children[this.children.length - 1].getLastPage();
+                 }
+                 return this;
+             }
+
+             render() {
+             }
          }
-         
-         site([
-             new Page('Something good', 'something-good', l.div()),
-             new Page('Something else good', 'else-good', l.div(), [
-                 new Page('Sub page', 'sub-page', l.div())
+
+         const site = new Site([
+             new Page('A', 'a', l.div('Gabba')),
+             new Page('B', 'b', l.div(), [
+                 new Page('C', 'c', l.div()),
+                 new Page('D', 'd', l.div())
              ]),
+             new Page('E', 'e', l.div()),
          ]);
-         */         
-         const pages = {};
-         function Page(name, url, html, prev, next, children) {
-             this.name = name;
-             this.url = url;
-             this.html = html;
-             this.prev = prev || null;
-             this.next = next || null;
-             this.parent = null;
-             
-             this.children = children || [];
-             
-             pages[url] = this;
-             
-             return this;
+         site.render();
+
+         window.onkeyup = function (e) {
+             switch (e.key) {
+                 case 'ArrowLeft':
+                 case 'a':
+                     const prevPage = site.getPrev();
+                     if (prevPage) {
+                         site.currentPage = prevPage;
+                         site.render();
+                     }
+                     break;
+                 case 'ArrowRight':
+                 case 'd':
+                     const nextPage = site.getNext();
+                     if (nextPage) {
+                         site.currentPage = nextPage;
+                         site.render();
+                     }
+                     break;
+                 case 'ArrowDown':
+                 case 's':
+                     const downPage = site.getDown();
+                     if (downPage) {
+                         site.currentPage = downPage;
+                         site.render();
+                     }
+                     break;
+                 case 'ArrowUp':
+                 case 'w':
+                     const upPage = site.getUp();
+                     if (upPage) {
+                         site.currentPage = upPage;
+                         site.render();
+                     }
+                     break;
+             }
          }
-         Page.prototype.render = function () {
-             l.set(document.body, this.html);
-         }
-
-         Page.prototype.render = function () {
-             this.nextPage = pages[this.next];
-             this.prevPage = pages[this.prev];
-
-             document.title = 'l - ' + this.name;
-             
-             l.set(document.body, l.with(this, function () {
-                 return div(
-                     prevPage == null ? '' : a(prevPage.name, { float: 'left', href: '#'+prevPage.url, style: { position: 'absolute' }}),
-                     nextPage == null ? '' : a(nextPage.name, { float: 'right', href: '#'+nextPage.url, style: { position: 'absolute', right: 0 }}),
-                     prevPage == null || url === 'overview' ? '' : a('Overview', { float: 'right', href: '#overview', style: { textAlign: 'center', width: '100%', display: 'block' }}),
-                     url === 'home' ? '' : div({ align: 'center' },
-                                               img({ src: 'img/logo.png', width: 100 }),
-                                               br,
-                                               h2(name),
-                     ),
-                     html
-                 )
-             }));
-         }
-
-         new Page('Home', 'home', function () {
-             return div(
-                 div({ align: 'center' },
-                     img({ src: 'img/logo.png', width: 100 }),
-                     br,
-                     a({ href: '#'}, img({ alt: 'no dependencies', src: 'https://img.shields.io/badge/dependencies-none-blue.svg', style: 'padding-right: 5px;' })),
-                     a({ href: 'https://travis-ci.org/adambertrandberger/l'}, img({ alt: 'no dependencies', src: 'https://travis-ci.org/adambertrandberger/l.svg?branch=master' })),
-                     h1('For Javascript'),
-                 ),
-                 p(`
-    Whether creating DOM nodes for your client-side app, or generating HTML for a Node.js webserver, `, i('l'), ` makes it easy.
-    For your client-side apps, you will be free from the chains that are the DOM API. No longer will you have verbose calls like \`document.createElement\`
-    binding you to your keyboard. With your new found freedom you can focus on describing HTML in a natural way. For your webservers, you can use the same 
-    liberating abstractions offered by generate HTML.
-
-    Try it out online [here](http://idiocode.com/projects/l/try.html)!
-         `),
-                 pre(code(`
-l(() => div(
-    h1('Example'),
-    div(p('First'), hr, p('Second'), span(span(span('Nesting is easy.')))),
-    section(header(h1('HTML 5 is supported too!')),
-    div('Properties can be set', { style: { color: 'red' }}),
-    div('Attributes can be set too!', { class: 'wow' }))
-));
-                 `)),
-                 pre(code('', `
-<div>
-    <h1>Example</h1>
-    <div>
-        <p>First</p>
-        <hr>
-        <p>Second</p>
-        <span><span><span>Nesting is easy.</span></span></span>
-    </div>
-    <section>
-        <header><h1>HTML 5 is supported too!</h1></header>
-        <div style="color: red;">Properties can be set</div>
-        <div class="wow">Attributes can be set too!</div>
-    </section>
-</div>
-                 `)),
-             )
-         }, '', 'overview');
-
-         new Page('Overview', 'overview', function () {
-             return div(
-                 div({ align: 'center' },
-                     renderSiteMap(pages.home, 0, ol({ style: { textAlign: 'left' }}))
-                 ),
-             )
-         }, 'home', 'creating-elements');
-
-         new Page('Creating Elements', 'creating-elements', function () {
-             return div(p(`
-Now we can make tags, but how can we add content to them? Starting from the methods above, we can
-add one more argument to each of these function calls. You can pass it a string to set the innerHTML:`),
-                        pre(code(`
-l.div('This is the innerHTML')
-// <div>This is the innerHTML</div>
-
-l('burrito', "I'm in a burrito")
-// <burrito>I'm in a burrito</burrito>
-                        `)),
-                        p(`You can keep adding in more strings as additional arguments too:`),
-                        code(pre(`
-l.div('First', 'Second', 'Third')
-// <div>FirstSecondThird</div>
-
-l('burrito', "I'm", "in", "a", "burrito")
-// <burrito>I'minaburrito</burrito>
-                        `)),
-                        p(`This will be more useful later when we learn about nesting HTML elements inside of each other.`),
-             );
-         }, 'overview', 'l-functions');
          
-         new Page('l Functions', 'l-functions', function () {
-             return div()
-         }, 'overview', 'license', [
-             'l-function-performance',
-         ]);
 
-         new Page('License', 'license', function () {
-             return div(
-                 pre(code(`
-Copyright 2019 Adam Bertrand Berger
+         /*
+            new Page('Home', 'home', function () {
+            return div(
+            div({ align: 'center' },
+            img({ src: 'img/logo.png', width: 100 }),
+            br,
+            a({ href: '#'}, img({ alt: 'no dependencies', src: 'https://img.shields.io/badge/dependencies-none-blue.svg', style: 'padding-right: 5px;' })),
+            a({ href: 'https://travis-ci.org/adambertrandberger/l'}, img({ alt: 'no dependencies', src: 'https://travis-ci.org/adambertrandberger/l.svg?branch=master' })),
+            h1('For Javascript'),
+            ),
+            p(`
+            Whether creating DOM nodes for your client-side app, or generating HTML for a Node.js webserver, `, i('l'), ` makes it easy.
+            For your client-side apps, you will be free from the chains that are the DOM API. No longer will you have verbose calls like \`document.createElement\`
+            binding you to your keyboard. With your new found freedom you can focus on describing HTML in a natural way. For your webservers, you can use the same 
+            liberating abstractions offered by generate HTML.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+            Try it out online [here](http://idiocode.com/projects/l/try.html)!
+            `),
+            pre(code(`
+            l(() => div(
+            h1('Example'),
+            div(p('First'), hr, p('Second'), span(span(span('Nesting is easy.')))),
+            section(header(h1('HTML 5 is supported too!')),
+            div('Properties can be set', { style: { color: 'red' }}),
+            div('Attributes can be set too!', { class: 'wow' }))
+            ));
+            `)),
+            pre(code('', `
+            <div>
+            <h1>Example</h1>
+            <div>
+            <p>First</p>
+            <hr>
+            <p>Second</p>
+            <span><span><span>Nesting is easy.</span></span></span>
+            </div>
+            <section>
+            <header><h1>HTML 5 is supported too!</h1></header>
+            <div style="color: red;">Properties can be set</div>
+            <div class="wow">Attributes can be set too!</div>
+            </section>
+            </div>
+            `)),
+            )
+            }, '', 'overview');
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+            new Page('Overview', 'overview', function () {
+            return div(
+            div({ align: 'center' },
+            renderSiteMap(pages.home, 0, ol({ style: { textAlign: 'left' }}))
+            ),
+            )
+            }, 'home', 'creating-elements');
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-                 `), { style: 'white-space: pre-wrap;' })
-             );
-         }, 'l-functions', '');
+            new Page('Creating Elements', 'creating-elements', function () {
+            return div(p(`
+            Now we can make tags, but how can we add content to them? Starting from the methods above, we can
+            add one more argument to each of these function calls. You can pass it a string to set the innerHTML:`),
+            pre(code(`
+            l.div('This is the innerHTML')
+            // <div>This is the innerHTML</div>
 
-         new Page('Performance of l Functions', 'l-function-performance', function () {
-             return div()
-         }, null, null, ['l-import']);
+            l('burrito', "I'm in a burrito")
+            // <burrito>I'm in a burrito</burrito>
+            `)),
+            p(`You can keep adding in more strings as additional arguments too:`),
+            code(pre(`
+            l.div('First', 'Second', 'Third')
+            // <div>FirstSecondThird</div>
 
-         new Page('l.import', 'l-import', function () {
-             return div('l.import');
-         }, 'l-function-performance', null);
+            l('burrito', "I'm", "in", "a", "burrito")
+            // <burrito>I'minaburrito</burrito>
+            `)),
+            p(`This will be more useful later when we learn about nesting HTML elements inside of each other.`),
+            );
+            }, 'overview', 'l-functions');
+            
+            new Page('l Functions', 'l-functions', function () {
+            return div()
+            }, 'overview', 'license', [
+            'l-function-performance',
+            ]);
 
-         
-         renderFromHash();
+            new Page('License', 'license', function () {
+            return div(
+            pre(code(`
+            Copyright 2019 Adam Bertrand Berger
+
+            Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+            The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+            `), { style: 'white-space: pre-wrap;' })
+            );
+            }, 'l-functions', '');
+
+            new Page('Performance of l Functions', 'l-function-performance', function () {
+            return div()
+            }, null, null, ['l-import']);
+
+            new Page('l.import', 'l-import', function () {
+            return div('l.import');
+            }, 'l-function-performance', null);
+
+            
+            renderFromHash();
+          */
         </script>
     </body>
 </html>
