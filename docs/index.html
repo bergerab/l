@@ -15,16 +15,16 @@
          };
 
          function renderSiteMap(cursor, depth, parent) {
-             cursor = cursor || pages.home;
+             cursor = cursor || site.pages.home;
              depth = depth || 0;
              parent = parent || document.body;
              while (cursor) {
                  var nextParent = l.div(l.a(cursor.name, { href: '#'+cursor.url ,style: { paddingLeft: depth*3 + '0px' }}));
                  l(parent, nextParent);
                  if (cursor.children.length > 0) {
-                     renderSiteMap(pages[cursor.children[0]], depth + 1, nextParent);
+                     renderSiteMap(site.pages[cursor.children[0]], depth + 1, nextParent);
                  }
-                 cursor = pages[cursor.next];
+                 cursor = site.pages[cursor.next];
              }
 
              return parent;
@@ -86,8 +86,8 @@
                      l.set(document.body, l.with({ currentPage: this.currentPage, prev, next, up }, function () {
                          return div(
                              prev == null ? '' : a(prev.name, { float: 'left', href: '#'+prev.url, style: { position: 'absolute' }}),
-                             next == null ? '' : a(next.name, { float: 'right', href: '#'+next.url, style: { position: 'absolute', right: 0 }}),
-                             up == null ? '' : a(up.name, { float: 'right', href: '#'+up.url, style: { textAlign: 'center', width: '100%', display: 'block' }}),
+                             next == null ? '' : a(next.name, { float: 'right', href: '#'+next.url, style: { display: 'table', marginLeft: 'auto' }}),
+                             up == null ? '' : a(up.name, { href: '#'+up.url, style: { textAlign: 'center', marginLeft: 'auto', marginRight: 'auto', display: 'block' }}),
                              currentPage.url === 'home' ? '' : div({ align: 'center' },
                                                                    img({ src: 'img/logo.png', width: 100 }),
                                                                    br,
@@ -174,16 +174,6 @@
              }
          }
 
-         const site = new Site([
-             new Page('A', 'a', l.div('Gabba')),
-             new Page('B', 'b', l.div(), [
-                 new Page('C', 'c', l.div()),
-                 new Page('D', 'd', l.div())
-             ]),
-             new Page('E', 'e', l.div()),
-         ]);
-         site.render();
-
          window.onkeyup = function (e) {
              switch (e.key) {
                  case 'ArrowLeft':
@@ -222,17 +212,17 @@
          }
          
 
-         /*
-            new Page('Home', 'home', function () {
-            return div(
-            div({ align: 'center' },
-            img({ src: 'img/logo.png', width: 100 }),
-            br,
-            a({ href: '#'}, img({ alt: 'no dependencies', src: 'https://img.shields.io/badge/dependencies-none-blue.svg', style: 'padding-right: 5px;' })),
-            a({ href: 'https://travis-ci.org/adambertrandberger/l'}, img({ alt: 'no dependencies', src: 'https://travis-ci.org/adambertrandberger/l.svg?branch=master' })),
-            h1('For Javascript'),
-            ),
-            p(`
+         const site = new Site([
+             new Page('Home', 'home', function () {
+                 return div(
+                     div({ align: 'center' },
+                         img({ src: 'img/logo.png', width: 100 }),
+                         br,
+                         a({ href: '#'}, img({ alt: 'no dependencies', src: 'https://img.shields.io/badge/dependencies-none-blue.svg', style: 'padding-right: 5px;' })),
+                         a({ href: 'https://travis-ci.org/adambertrandberger/l'}, img({ alt: 'no dependencies', src: 'https://travis-ci.org/adambertrandberger/l.svg?branch=master' })),
+                         h1('For Javascript'),
+                     ),
+                     p(`
             Whether creating DOM nodes for your client-side app, or generating HTML for a Node.js webserver, `, i('l'), ` makes it easy.
             For your client-side apps, you will be free from the chains that are the DOM API. No longer will you have verbose calls like \`document.createElement\`
             binding you to your keyboard. With your new found freedom you can focus on describing HTML in a natural way. For your webservers, you can use the same 
@@ -240,7 +230,7 @@
 
             Try it out online [here](http://idiocode.com/projects/l/try.html)!
             `),
-            pre(code(`
+                     pre(code(`
             l(() => div(
             h1('Example'),
             div(p('First'), hr, p('Second'), span(span(span('Nesting is easy.')))),
@@ -248,8 +238,8 @@
             div('Properties can be set', { style: { color: 'red' }}),
             div('Attributes can be set too!', { class: 'wow' }))
             ));
-            `)),
-            pre(code('', `
+                     `)),
+                     pre(code('', `
             <div>
             <h1>Example</h1>
             <div>
@@ -264,50 +254,52 @@
             <div class="wow">Attributes can be set too!</div>
             </section>
             </div>
-            `)),
-            )
-            }, '', 'overview');
-
-            new Page('Overview', 'overview', function () {
-            return div(
-            div({ align: 'center' },
-            renderSiteMap(pages.home, 0, ol({ style: { textAlign: 'left' }}))
-            ),
-            )
-            }, 'home', 'creating-elements');
-
-            new Page('Creating Elements', 'creating-elements', function () {
-            return div(p(`
+                     `)),
+                 )
+             }),
+             
+             new Page('Overview', 'overview', function () {
+                 return div(
+                     div({ align: 'center' },
+                         renderSiteMap(undefined, 0, ol({ style: { textAlign: 'left' }}))
+                     ),
+                 )
+             }),
+             
+             new Page('Creating Elements', 'creating-elements', function () {
+                 return div(p(`
             Now we can make tags, but how can we add content to them? Starting from the methods above, we can
             add one more argument to each of these function calls. You can pass it a string to set the innerHTML:`),
-            pre(code(`
+                            pre(code(`
             l.div('This is the innerHTML')
             // <div>This is the innerHTML</div>
 
             l('burrito', "I'm in a burrito")
             // <burrito>I'm in a burrito</burrito>
-            `)),
-            p(`You can keep adding in more strings as additional arguments too:`),
-            code(pre(`
+                            `)),
+                            p(`You can keep adding in more strings as additional arguments too:`),
+                            code(pre(`
             l.div('First', 'Second', 'Third')
             // <div>FirstSecondThird</div>
 
             l('burrito', "I'm", "in", "a", "burrito")
             // <burrito>I'minaburrito</burrito>
-            `)),
-            p(`This will be more useful later when we learn about nesting HTML elements inside of each other.`),
-            );
-            }, 'overview', 'l-functions');
-            
-            new Page('l Functions', 'l-functions', function () {
-            return div()
-            }, 'overview', 'license', [
-            'l-function-performance',
-            ]);
-
-            new Page('License', 'license', function () {
-            return div(
-            pre(code(`
+                            `)),
+                            p(`This will be more useful later when we learn about nesting HTML elements inside of each other.`),
+                 );
+             }),
+             
+             new Page('l Functions', 'l-functions', function () {
+                 return div()
+             }, [
+                 new Page('Performance of l Functions', 'l-function-performance', function () {
+                     return div()
+                 }),
+             ]),
+             
+             new Page('License', 'license', function () {
+                 return div(
+                     pre(code(`
             Copyright 2019 Adam Bertrand Berger
 
             Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -315,17 +307,27 @@
             The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-            `), { style: 'white-space: pre-wrap;' })
-            );
-            }, 'l-functions', '');
+                     `), { style: 'white-space: pre-wrap;' })
+                 );
+             }),
 
-            new Page('Performance of l Functions', 'l-function-performance', function () {
-            return div()
-            }, null, null, ['l-import']);
+             new Page('l.import', 'l-import', function () {
+                 return div('l.import');
+             }),
+             
+             new Page('A', 'a', l.div('Gabba')),
+             
+             new Page('B', 'b', l.div(), [
+                 new Page('C', 'c', l.div()),
+                 new Page('D', 'd', l.div())
+             ]),
+             
+             new Page('E', 'e', l.div()),
+         ]);
+         site.render();
+         
+         /*
 
-            new Page('l.import', 'l-import', function () {
-            return div('l.import');
-            }, 'l-function-performance', null);
 
             
             renderFromHash();
