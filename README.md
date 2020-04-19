@@ -11,8 +11,6 @@ For your client-side apps, you will be free from the chains that are the DOM API
 binding you to your keyboard. With your new found freedom you can focus on describing HTML in a natural way. For your webservers, you can use the same 
 liberating abstractions offered by <img src="img/l.png" alt="l" height="14px"></img> to generate HTML.
 
-Try it out online [here](http://idiocode.com/projects/l/try.html)!
-
 <img src="img/l.png" alt="l" height="14px"></img>:
 ```javascript
 l(() => div(
